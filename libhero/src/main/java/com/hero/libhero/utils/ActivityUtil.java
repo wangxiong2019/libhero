@@ -16,7 +16,6 @@ import java.util.List;
 
 public class ActivityUtil {
 
-    static String TAG = "ActivityUtil";
 
 
     public static ArrayList<Activity> activityList = new ArrayList<Activity>();
