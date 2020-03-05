@@ -15,7 +15,7 @@ public class LibHeroInitializer {
      *         }
      *     }
      * }
-     *  2.
+     *  2. 当时提交 无法使用 过一段时间
      *  implementation 'com.github.wangxiong2019:libhero:v1.0.1'
      *
      *  3. Application
