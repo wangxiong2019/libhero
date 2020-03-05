@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class MatchUtil {
 
     //获取手机联系人
-    public static String getPhone(Intent data, Activity mActivity) {
+    public static String getPhone(Intent data, Context mActivity) {
 
         String phonenum = "";
         Uri contactData = data.getData();
@@ -100,7 +100,7 @@ public class MatchUtil {
     /**
      * 判断网络有无
      */
-    public static boolean isNetTrue(Activity mActivity) {
+    public static boolean isNetTrue(Context mActivity) {
         boolean isNet = false;
         ConnectivityManager conManager = (ConnectivityManager) mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo network = conManager.getActiveNetworkInfo();
