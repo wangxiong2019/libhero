@@ -32,13 +32,14 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    implementation 'com.android.support:design:29.0.0'
 
     //okttp依赖
     implementation 'com.squareup.okhttp3:okhttp:3.3.0'
     //阿里巴巴 字符串解析
     implementation files('libs/fastjson-1.2.9.jar')
 
-    //图片加载框架 4.8.0与com.android.support:appcompat-v7:26.0.0 冲突
+    //图片加载框架 4.8.0与com.android.support:appcompat-v7:*** 冲突
     implementation('com.github.bumptech.glide:glide:4.8.0') {
         exclude group: "com.android.support"
     }
