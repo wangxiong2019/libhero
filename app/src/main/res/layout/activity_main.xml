@@ -39,4 +39,9 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.hero.libhero.view.NoScrollViewPager
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
 </LinearLayout>

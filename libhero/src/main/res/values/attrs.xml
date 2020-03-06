@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 正则表达式编辑框 -->
+    <declare-styleable name="RegexEditText">
+        <!-- 正则输入限制 -->
+        <attr name="inputRegex" format="string" />
+        <!-- 常用正则类型 -->
+        <attr name="regexType" >
+            <!-- 手机号（只能以 1 开头） -->
+            <enum name="mobile" value="0x01" />
+            <!-- 中文（普通的中文字符） -->
+            <enum name="chinese" value="0x02" />
+            <!-- 英文（大写和小写的英文） -->
+            <enum name="english" value="0x03" />
+            <!-- 整数（非 0 开头的数字） -->
+            <enum name="count" value="0x04" />
+            <!-- 用户名（中文、英文、数字） -->
+            <enum name="name" value="0x05" />
+            <!-- 非空格字符 -->
+            <enum name="nonnull" value="0x06" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="StickNavLayout">
+        <!--默认是否悬停tab-->
+        <attr name="isStickNav" format="boolean" />
+        <!--距离悬浮的位置-->
+        <attr name="stickOffset" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="StickyScrollView">
+        <attr name="stuckShadowHeight" format="dimension" />
+        <attr name="stuckShadowDrawable" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="VerticalRecyclerView">
+        <attr name="top_margin" format="dimension"/>
+        <attr name="middle_margin" format="dimension"/>
+        <attr name="bottom_margin" format="dimension"/>
+        <attr name="divider_color" format="color"/>
+        <attr name="divider_height" format="dimension"/>
+        <attr name="maxHeight" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="HorizonalRecyclerView">
+        <attr name="h_left_margin" format="dimension"/>
+        <attr name="h_middle_margin" format="dimension"/>
+        <attr name="h_right_margin" format="dimension"/>
+        <attr name="h_divider_color" format="color"/>
+        <attr name="h_divider_height" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="MyCheckBox">
+        <attr name="android:button" />
+        <attr name="attr_drawableWidth" format="dimension" />
+        <attr name="attr_drawableHight" format="dimension" />
+    </declare-styleable>
+    <!--圆头像-->
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="SwitchView">
+        <attr name="hasShadow" format="boolean"/>
+        <attr name="primaryColor" format="color"/>
+        <attr name="primaryColorDark" format="color"/>
+        <attr name="isOpened" format="boolean"/>
+    </declare-styleable>
+</resources>
