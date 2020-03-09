@@ -93,7 +93,8 @@ public class OkHttpUtil {
             /**
              * trust all the https point
              */
-            okHttpClientBuilder.sslSocketFactory(HttpsUtils.initSSLSocketFactory(), HttpsUtils.initTrustManager());
+            okHttpClientBuilder.sslSocketFactory(HttpsUtils.initSSLSocketFactory(),
+                    HttpsUtils.initTrustManager());
             mOkHttpClient = okHttpClientBuilder.build();
 
 
@@ -111,7 +112,7 @@ public class OkHttpUtil {
         executeRequest(request, myCallBack);
     }
 
-    public static void doGetJsonStrAnsy(boolean isWenHao, String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doGetJsonStrAsyn(boolean isWenHao, String http_url, Map<String, String> map, MyCallBack myCallBack) {
         Request request = getStr(isWenHao, http_url, map);
         enqueueRequest(request, myCallBack);
     }
@@ -144,7 +145,7 @@ public class OkHttpUtil {
         executeRequest(request, myCallBack);
     }
 
-    public static void doPostJsonStrAnsy(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doPostJsonStrAsyn(String http_url, Map<String, String> map, MyCallBack myCallBack) {
         Request request = getJsonStr(http_url, map);
         enqueueRequest(request, myCallBack);
     }

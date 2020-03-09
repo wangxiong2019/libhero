@@ -11,13 +11,107 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+
+
+    //keytool -list -v -keystore D:\**.jks
+
+
+    //MD5: F6:DF:87:AA:DE:3D:C2:FD:8A:2A:02:B8:EC:A4:A2:6F
+    //SHA1: D3:10:48:7B:DA:3F:C9:8E:83:AC:F4:C5:36:96:C4:84:3B:92:F4:6F
+    //SHA256: D4:8C:10:31:56:72:93:99:0E:18:60:03:15:38:59:22:CF:24:AA:B2:0A:9B:B0:7B:10:07:E3:E7:49:BB:B8:F9
+    //签名算法名称: SHA256withRSA
+    //根据包名得到的签名  f6df87aade3dc2fd8a2a02b8eca4a26f
+    signingConfigs {
+
+
+        def alias = "dsjsknx9a1"
+        def password = "dsjsknx9a1"
+        def filePath = "../dsjsknx9a1.jks"  //签名文件路径
+        debug {
+            keyAlias alias
+            keyPassword password
+            storeFile file(filePath)
+            storePassword(password)
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            keyAlias alias
+            keyPassword password
+            storeFile file(filePath)
+            storePassword(password)
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
+    buildTypes {
+        release {
+            minifyEnabled false //是否混淆
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+
+
+        //自定义打包apk的名字以及路径，适用于AS 3.0+
+        android.applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                outputFileName = "hero_" + defaultConfig.versionCode + ".apk"
+            }
+        }
+    }
+    sourceSets {
+        main {
+            //引用so文件第二种方式  重定向
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+
+    //解决 java.lang.BootstrapMethodError: Exception from call site #1 bootstrap method
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
+
+////360插件化 第二步
+//// 必须在 android{}后
+//
+//// ATTENTION!!! Must be PLACED AFTER "android{}" to read the applicationId
+//apply plugin: 'replugin-host-gradle'
+//
+///**
+// * 配置项均为可选配置，默认无需添加
+// * 更多可选配置项参见replugin-host-gradle的RepluginConfig类
+// * 可更改配置项参见 自动生成RePluginHostConfig.java
+// */
+//repluginHostConfig {
+//    /**
+//     * 是否使用 AppCompat 库
+//     * 不需要个性化配置时，无需添加
+//     * 开启useAppCompat后，我们会在编译期生成AppCompat专用坑位，
+//     * 这样插件若使用AppCompat的Theme时就能生效了。若不设置，则可能会出现
+//     * “IllegalStateException: You need to use a Theme.AppCompat
+//     * theme (or descendant) with this activity.”的异常。
+//     */
+//    useAppCompat = true
+//    /**
+//     * 背景不透明的坑的数量
+//     * 不需要个性化配置时，无需添加
+//     */
+//    countNotTranslucentStandard = 6
+//    countNotTranslucentSingleTop = 2
+//    countNotTranslucentSingleTask = 3
+//    countNotTranslucentSingleInstance = 2
+//}
+
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -30,4 +124,15 @@ dependencies {
     implementation project(':libhero')
     //权限
     implementation 'com.github.dfqin:grantor:2.5'
+
+    //事件分发、页面之间传值
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
+    //butterknife 控件绑定 点击事件
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+
+
+    //360插件化 第二步
+    //implementation 'com.qihoo360.replugin:replugin-host-lib:2.2.4'
 }

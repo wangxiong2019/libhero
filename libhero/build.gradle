@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
 
@@ -21,9 +21,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    //解决 java.lang.BootstrapMethodError: Exception from call site #1 bootstrap method
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
-
+allprojects {
+    repositories {
+        maven { url 'https://www.jitpack.io' }
+    }
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -39,9 +47,18 @@ dependencies {
     //阿里巴巴 字符串解析
     implementation files('libs/fastjson-1.2.9.jar')
 
+
+
+
     //图片加载框架 4.8.0与com.android.support:appcompat-v7:*** 冲突
     implementation('com.github.bumptech.glide:glide:4.8.0') {
         exclude group: "com.android.support"
     }
+
+    //数据库
+    //implementation 'com.github.Raizlabs.DBFlow:dbflow:4.2.4'
+
+    //组件注解 数据库 组件监听 多增加0.5MB
+    //implementation 'org.xutils:xutils:3.3.36'
 }
 

@@ -1,8 +1,11 @@
 package com.hero.libhero;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+
+import com.hero.libhero.mydb.XDb;
 
 public class LibHeroInitializer {
 
@@ -16,7 +19,7 @@ public class LibHeroInitializer {
      *     }
      * }
      *  2. 当时提交 无法使用 过一段时间
-     *  implementation 'com.github.wangxiong2019:libhero:v1.0.1'
+     *  implementation 'com.github.wangxiong2019:libhero:1.0.1'
      *
      *  3. Application
      *  LibHeroInitializer.init(this)
@@ -31,9 +34,12 @@ public class LibHeroInitializer {
     /**
      * @Description 使用依赖库时必须在Application的onCreate方法中显式调用ToastInitializer.initializer(this);
      */
-    public static void init(Context context) {
-        if (null != context) {
-            appContext = context;
+    public static void init(Application app,boolean logShow) {
+        if (null != app) {
+            appContext = app.getApplicationContext();
+
+            XDb.Ext.init(app,logShow);
+
         }
     }
 
