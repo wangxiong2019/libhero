@@ -25,7 +25,7 @@ public class MyApp extends Application {
 
         //RePlugin.App.onCreate();
 
-        LibHeroInitializer.init(this,true);
+        LibHeroInitializer.init(this,false);
 
         initOkHttp();
     }

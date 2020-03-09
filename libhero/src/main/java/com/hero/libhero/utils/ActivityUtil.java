@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.hero.libhero.LibHeroInitializer;
+import com.hero.libhero.mydb.LogUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class ActivityUtil {
 //
 //        activitys.add(act);
 
-        Log.e("ActivityUtil", "activitys.size()==" + activityList.size() + "//act==" + act);
+        LogUtil.e("ActivityUtil=activitys.size()==" + activityList.size() + "//act==" + act);
     }
 
     public static void FinishAct(Activity act) {
@@ -82,7 +83,7 @@ public class ActivityUtil {
 //        }
 
 
-        Log.e("ActivityUtil", "activitys.size()==" + activityList.size() + "//act==" + act);
+        LogUtil.e("ActivityUtil=activitys.size()==" + activityList.size() + "//act==" + act);
     }
 
     public static void ExitApp() {
