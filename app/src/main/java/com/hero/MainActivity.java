@@ -51,6 +51,10 @@ public class MainActivity extends BaseActivty {
      */
     @BindView(R.id.tv_res)
     TextView tv_res;
+    @BindView(R.id.tv_res0)
+    TextView tv_res0;
+    @BindView(R.id.tv_res1)
+    TextView tv_res1;
     @BindView(R.id.tv_res2)
     TextView tv_res2;
     @BindView(R.id.tv_res3)
@@ -59,14 +63,6 @@ public class MainActivity extends BaseActivty {
     ImageView iv_01;
 
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        tv_res = findViewById(R.id.tv_res);
-//        tv_res2 = findViewById(R.id.tv_res2);
-//        tv_res3 = findViewById(R.id.tv_res3);
-//    }
 
     @Override
     public int getLayout() {
@@ -171,12 +167,7 @@ public class MainActivity extends BaseActivty {
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
+
 
 
     private class Download1 extends AsyncTask<String, Integer, String> {
@@ -274,12 +265,12 @@ public class MainActivity extends BaseActivty {
                 map.put("vesion", "4.0.0");
                 map.put("app", "apt");
 
-                String http_url="http://192.168.0.5:8081/App/CommonApi/PostRequestBody";
+                String http_url="http://www.fastpaotui.com/App/CommonApi/PostRequestBody";
 
                 OkHttpUtil.doPostBody(http_url, map, new MyCallBack() {
                     @Override
                     public void failBack(String res_msg, int res_code) {
-
+                        tv_res0.setText(res_msg);
                     }
 
                     @Override
@@ -288,7 +279,7 @@ public class MainActivity extends BaseActivty {
                             @Override
                             public void run() {
                                 ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
-                                tv_res2.setText(resData.getData().toString());
+                                tv_res0.setText(resData.getData().toString());
 
                             }
                         });
@@ -309,20 +300,20 @@ public class MainActivity extends BaseActivty {
         map.put("platform", "android");
         map.put("vesion", "4.0.0");
         map.put("app", "apt");
-        String http_url = "http://192.168.0.5:8081/App/CommonApi/PostJson";
+        String http_url = "http://www.fastpaotui.com/App/CommonApi/PostJson";
         //String http_url = "http://192.168.0.5:8081/App/CommonApi/GetProvinceList";
 
         OkHttpUtil.doPostJsonStrAsyn(http_url, map, new MyCallBack() {
             @Override
             public void failBack(String res_msg, int res_code) {
-                tv_res3.setText(res_msg);
+                tv_res1.setText(res_msg);
             }
 
             @Override
             public void successBack(String res_data) {
 
                 ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
-                tv_res3.setText(resData.getData().toString());
+                tv_res1.setText(resData.getData().toString());
 
             }
 
@@ -372,17 +363,20 @@ public class MainActivity extends BaseActivty {
             OkHttpUtil.uploadProgressParameAndFile(http_url, map, new ReqProgressCallBack() {
                 @Override
                 public void failBack(String res_msg, int res_code) {
-
+                    tv_res3.setText(res_msg);
                 }
 
                 @Override
                 public void successBack(String res_data) {
-                    tv_res2.setText("上传成功");
+                    tv_res3.setText("上传成功");
                 }
 
                 @Override
                 public void progressBack(long total, long current) {
-                    tv_res3.setText("进度：" + current + "/" + total);
+                    float c = (float) (current / 1024.0 / 1024.0);
+                    float t = (float) (total / 1024.0 / 1024.0);
+
+                    tv_res3.setText("上传进度：" + getTwoPrice(c) + "MB/" + getTwoPrice(t) + "MB");
                 }
 
 
@@ -398,7 +392,7 @@ public class MainActivity extends BaseActivty {
         OkHttpUtil.downLoadProgressFile(file_path, save_path, new ReqProgressCallBack() {
             @Override
             public void failBack(String res_msg, int res_code) {
-
+                tv_res2.setText(res_msg);
             }
 
             @Override
@@ -412,7 +406,7 @@ public class MainActivity extends BaseActivty {
                 float c = (float) (current / 1024.0 / 1024.0);
                 float t = (float) (total / 1024.0 / 1024.0);
 
-                tv_res3.setText("进度：" + getTwoPrice(c) + "MB/" + getTwoPrice(t) + "MB");
+                tv_res2.setText("下载进度：" + getTwoPrice(c) + "MB/" + getTwoPrice(t) + "MB");
             }
 
 

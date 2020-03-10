@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.SocketTimeoutException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +49,7 @@ public class OkHttpUtil {
     public static Handler mMainHandler = new Handler(Looper.getMainLooper());
 
 
-    private static int TIME_OUT = 10;
+    private static int TIME_OUT = 45;
 
 
     public static void initOkHttp() {
@@ -314,12 +313,12 @@ public class OkHttpUtil {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e(TAG, e.toString());
+
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         LogUtil.e(e.getMessage());
-                        String message=e.getMessage();
+                        String message = e.getMessage();
                         myCallBack.failBack(message, -1);
                     }
                 });
@@ -364,11 +363,11 @@ public class OkHttpUtil {
 
 
                 } catch (IOException e) {
-                    Log.e(TAG, e.toString());
+                    LogUtil.e(e.getMessage());
                     mMainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            myCallBack.failBack(msg, code);
+                            myCallBack.failBack(e.getMessage(), -1);
                         }
                     });
 
@@ -381,7 +380,7 @@ public class OkHttpUtil {
                             fos.close();
                         }
                     } catch (IOException e) {
-                        Log.e(TAG, e.toString());
+                        LogUtil.e(e.getMessage());
                     }
                 }
 
@@ -444,8 +443,6 @@ public class OkHttpUtil {
 
     public static void enqueueRequest(Request request, final MyCallBack myCallBack) {
         Call call = mOkHttpClient.newCall(request);
-
-
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, IOException e) {
@@ -456,7 +453,7 @@ public class OkHttpUtil {
                     @Override
                     public void run() {
                         LogUtil.e(e.getMessage());
-                        String message=e.getMessage();
+                        String message = e.getMessage();
                         myCallBack.failBack(message, -1);
 
 //                        if (message.contains("Failed to connect to")) {
@@ -475,9 +472,9 @@ public class OkHttpUtil {
                 final int code = response.code();
                 final boolean isSucess = response.isSuccessful();
                 final String msg = response.message();
-                LogUtil.e("enqueue返回code"+ code + "");
-                LogUtil.e("enqueue返回isSuccessful"+ isSucess + "");
-                LogUtil.e("enqueue返回message"+ msg + "");
+                LogUtil.e("enqueue返回code" + code + "");
+                LogUtil.e("enqueue返回isSuccessful" + isSucess + "");
+                LogUtil.e("enqueue返回message" + msg + "");
 
                 final String res = response.body().string();
                 Log.e("enqueue返回data", res);
