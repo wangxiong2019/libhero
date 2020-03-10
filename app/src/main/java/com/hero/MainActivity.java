@@ -75,11 +75,19 @@ public class MainActivity extends BaseActivty {
 
     @Override
     public void initView() {
-        //baidu();
 
-        //postData1();
+        //EventBus    1.注册事件
+        EventBus.getDefault().register(this);
 
-        //postData2();
+        doGet();
+
+        doPostBody();
+
+        doPostJsonStrAsyn();
+
+        initDb();
+
+        pic();
 
         PermissionsUtil.requestPermission(MainActivity.this, new PermissionListener() {
             @Override
@@ -92,15 +100,10 @@ public class MainActivity extends BaseActivty {
 
             }
         }, needPermissions);
+    }
 
-        initDb();
-
-
-        //EventBus    1.注册事件
-        EventBus.getDefault().register(this);
-
+    private void pic(){
         String img_url="http://img.hb.aicdn.com/43adcee6fa8d59ceb3219f8e7bfc818abcda59b22c8f1-r2zIW3";
-
         GlideUtil.loadGifOrImg(this,img_url,iv_01);
     }
 
@@ -123,6 +126,7 @@ public class MainActivity extends BaseActivty {
     DbUtil dbUtil;
     List<UserBean> userBeanList;
 
+    //数据库 示例
     private void initDb() {
 
         dbUtil = DbUtil.getInstance();
@@ -232,14 +236,13 @@ public class MainActivity extends BaseActivty {
 
 
     private void file() {
-        //postFile1();
-        //postFile2();
-        //dowmloadFile1();
+        //setPostParameAndFile();
+        //uploadProgressParameAndFile();
         //downLoadProgressFile();
     }
 
 
-    private void baidu() {
+    private void doGet() {
         String url = "https://www.baidu.com/";
 
         OkHttpUtil.doGetJsonStrAsyn(false, url, null, new MyCallBack() {
@@ -257,7 +260,76 @@ public class MainActivity extends BaseActivty {
 
     }
 
-    private void postFile1() {
+
+
+
+
+    private void doPostBody() {
+        //同步请求
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, String> map = new HashMap<>();
+                map.put("platform", "android");
+                map.put("vesion", "4.0.0");
+                map.put("app", "apt");
+
+                String http_url="http://192.168.0.5:8081/App/CommonApi/PostRequestBody";
+
+                OkHttpUtil.doPostBody(http_url, map, new MyCallBack() {
+                    @Override
+                    public void failBack(String res_msg, int res_code) {
+
+                    }
+
+                    @Override
+                    public void successBack(final String res_data) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
+                                tv_res2.setText(resData.getData().toString());
+
+                            }
+                        });
+                    }
+
+
+                });
+
+            }
+        }).start();
+
+
+    }
+
+    private void doPostJsonStrAsyn() {
+        //异步请求
+        Map<String, String> map = new HashMap<>();
+        map.put("platform", "android");
+        map.put("vesion", "4.0.0");
+        map.put("app", "apt");
+        String http_url = "http://192.168.0.5:8081/App/CommonApi/PostJson";
+        //String http_url = "http://192.168.0.5:8081/App/CommonApi/GetProvinceList";
+
+        OkHttpUtil.doPostJsonStrAsyn(http_url, map, new MyCallBack() {
+            @Override
+            public void failBack(String res_msg, int res_code) {
+                tv_res3.setText(res_msg);
+            }
+
+            @Override
+            public void successBack(String res_data) {
+
+                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
+                tv_res3.setText(resData.getData().toString());
+
+            }
+
+        });
+    }
+    //上传文件 不带进度
+    private void setPostParameAndFile() {
         String pic_path = Environment.getExternalStorageDirectory() + "/app_bingbinggou/1577351213426.JPEG";
 
         File file = new File(pic_path);
@@ -284,8 +356,8 @@ public class MainActivity extends BaseActivty {
             });
         }
     }
-
-    private void postFile2() {
+    //上传文件件 带进度
+    private void uploadProgressParameAndFile() {
         String pic_path = Environment.getExternalStorageDirectory() + "/tencent/QQfile_recv/ipaotui_new.apk";
 
         File file = new File(pic_path);
@@ -317,72 +389,7 @@ public class MainActivity extends BaseActivty {
             });
         }
     }
-
-    private void postData1() {
-        //同步请求
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Map<String, String> map = new HashMap<>();
-                map.put("platform", "android");
-                map.put("vesion", "4.0.0");
-                map.put("app", "apt");
-                OkHttpUtil.doPostAsny(apt_ip, map, new MyCallBack() {
-                    @Override
-                    public void failBack(String res_msg, int res_code) {
-
-                    }
-
-                    @Override
-                    public void successBack(final String res_data) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-//Log.e("res",res_data);
-                                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
-                                tv_res2.setText(resData.getData().toString());
-
-                            }
-                        });
-                    }
-
-
-                });
-
-            }
-        }).start();
-
-
-    }
-
-    private void postData2() {
-        //异步请求
-        Map<String, String> map = new HashMap<>();
-        map.put("platform", "android");
-        map.put("vesion", "4.0.0");
-        map.put("app", "apt");
-        String http_url = "http://www.fastpaotui.com/App/CommonApi/GetProvinceList";
-        //String http_url = "http://192.168.0.5:8081/App/CommonApi/GetProvinceList";
-
-        OkHttpUtil.doPostAsny(http_url, map, new MyCallBack() {
-            @Override
-            public void failBack(String res_msg, int res_code) {
-
-            }
-
-            @Override
-            public void successBack(String res_data) {
-                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
-
-                List<DistrictBean> list = JsonUtil.dataToList(resData.getData().toString(), DistrictBean.class);
-                tv_res.setText(list.get(0).getProvince_name() + "");
-
-            }
-
-        });
-    }
-
-
+    //下载文件 带进度
     private void downLoadProgressFile() {
         String file_path = "http://www.fastpaotui.com/uploadfile/wang/ipaotui_new.apk";
         ActivityUtil.IsHasSD();

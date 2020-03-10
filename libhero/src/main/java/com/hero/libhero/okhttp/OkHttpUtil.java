@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.okhttp.cookie.SimpleCookieJar;
 import com.hero.libhero.okhttp.https.HttpsUtils;
 import com.hero.libhero.okhttp.https.MyCallBack;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -47,9 +49,8 @@ public class OkHttpUtil {
     private static OkHttpClient mOkHttpClient;
     public static Handler mMainHandler = new Handler(Looper.getMainLooper());
 
-    public static int res_code = 200;
 
-    private static int TIME_OUT = 90;
+    private static int TIME_OUT = 10;
 
 
     public static void initOkHttp() {
@@ -71,22 +72,22 @@ public class OkHttpUtil {
             /**
              *  为所有请求添加请求头，看个人需求
              */
-            if (getHeaderMap() != null) {
-                okHttpClientBuilder.addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request()
-                                .newBuilder()
-                                // 标明发送本次请求的客户端
-                                .headers(getHeaders())
-                                .build();
-                        return chain.proceed(request);
-                    }
-                });
-            }
+            //if (getHeaderMap() != null) {
+            okHttpClientBuilder.addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request request = chain.request()
+                            .newBuilder()
+                            // 标明发送本次请求的客户端
+                            .headers(getHeaders())
+                            .build();
+                    return chain.proceed(request);
+                }
+            });
+            //}
 
             okHttpClientBuilder.cookieJar(new SimpleCookieJar());
-            okHttpClientBuilder.connectTimeout(TIME_OUT, TimeUnit.SECONDS);
+            okHttpClientBuilder.connectTimeout(TIME_OUT, TimeUnit.SECONDS);//单位是秒
             okHttpClientBuilder.readTimeout(TIME_OUT, TimeUnit.SECONDS);
             okHttpClientBuilder.writeTimeout(TIME_OUT, TimeUnit.SECONDS);
             okHttpClientBuilder.followRedirects(true);
@@ -96,7 +97,6 @@ public class OkHttpUtil {
             okHttpClientBuilder.sslSocketFactory(HttpsUtils.initSSLSocketFactory(),
                     HttpsUtils.initTrustManager());
             mOkHttpClient = okHttpClientBuilder.build();
-
 
 
 //                }
@@ -150,6 +150,7 @@ public class OkHttpUtil {
         enqueueRequest(request, myCallBack);
     }
 
+    //后台可以使用Map 或对象接收
     private static Request getJsonStr(String http_url, Map<String, String> map) {
         //数据类型为json格式，
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -171,29 +172,34 @@ public class OkHttpUtil {
     public static final String METHOD_PUT = "PUT";
     public static final String METHOD_DELETE = "DELETE";
 
-    public static void doPost(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    /**
+     * post,put,delete都需要body，但也都有body等于空的情况，
+     * 此时也应该有body对象，但body中的内容为空
+     */
+
+    public static void doPostBody(String http_url, Map<String, String> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_POST, http_url, map);
         executeRequest(request, myCallBack);
     }
 
-    /**
-     * post,put,delete都需要body，但也都有body等于空的情况，此时也应该有body对象，但body中的内容为空
-     */
-    public static void doPutAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
-        Request request = getBody(METHOD_PUT, http_url, map);
-        enqueueRequest(request, myCallBack);
-    }
 
-    public static void doDeleteAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
-        Request request = getBody(METHOD_DELETE, http_url, map);
-        enqueueRequest(request, myCallBack);
-    }
-
-    public static void doPostAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doPostBodyAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_POST, http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
+    public static void doPutBodyAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+        Request request = getBody(METHOD_PUT, http_url, map);
+        enqueueRequest(request, myCallBack);
+    }
+
+    public static void doDeleteBodyAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+        Request request = getBody(METHOD_DELETE, http_url, map);
+        enqueueRequest(request, myCallBack);
+    }
+
+
+    //后台可以使用@RequestParam()接收
     private static Request getBody(String method, String http_url, Map<String, String> map) {
         FormBody.Builder formBody = new FormBody.Builder();//创建表单请求体
         if (null != map && map.size() > 0) {
@@ -204,7 +210,6 @@ public class OkHttpUtil {
         }
         Log.e("http_url", http_url);
         RequestBody body = formBody.build();
-
         Request.Builder builder = new Request.Builder();
         if (method.equals(METHOD_POST)) {
             builder.post(body);
@@ -226,7 +231,7 @@ public class OkHttpUtil {
     private static MediaType FILE_TYPE = null;//MediaType.parse("application/octet-stream");
 
     /**
-     * 只有一个文件，且提交服务器时不用指定键，带键值对参数
+     * 只有一个文件，且提交服务器时不用指定键，带键值对参数 不带上传进度
      */
     public static void setPostParameAndFile(String http_url, Map<String, Object> map,
                                             MyCallBack myCallBack) {
@@ -313,7 +318,9 @@ public class OkHttpUtil {
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        myCallBack.failBack("onFailure", -1);
+                        LogUtil.e(e.getMessage());
+                        String message=e.getMessage();
+                        myCallBack.failBack(message, -1);
                     }
                 });
             }
@@ -448,7 +455,16 @@ public class OkHttpUtil {
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        myCallBack.failBack("onFailure", -1);
+                        LogUtil.e(e.getMessage());
+                        String message=e.getMessage();
+                        myCallBack.failBack(message, -1);
+
+//                        if (message.contains("Failed to connect to")) {
+//                            myCallBack.failBack(message, -1);
+//                        } else {
+//                            myCallBack.failBack("onFailure=" + e.getCause().getMessage(), -1);
+//                        }
+
                     }
                 });
             }
@@ -459,9 +475,9 @@ public class OkHttpUtil {
                 final int code = response.code();
                 final boolean isSucess = response.isSuccessful();
                 final String msg = response.message();
-                Log.e("enqueue返回code", code + "");
-                Log.e("enqueue返回isSuccessful", isSucess + "");
-                Log.e("enqueue返回message", msg + "");
+                LogUtil.e("enqueue返回code"+ code + "");
+                LogUtil.e("enqueue返回isSuccessful"+ isSucess + "");
+                LogUtil.e("enqueue返回message"+ msg + "");
 
                 final String res = response.body().string();
                 Log.e("enqueue返回data", res);
