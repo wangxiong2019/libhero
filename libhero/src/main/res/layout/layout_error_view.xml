@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/error_retry_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="244dp"
+        android:layout_height="307dp"
+        android:layout_marginTop="36dp"
+        android:src="@mipmap/error_activity1" />
+
+    <TextView
+        android:layout_width="199dp"
+        android:layout_height="22dp"
+        android:text="页面异常，请稍后再试噢～"
+        android:textColor="#ffff414c"
+        android:textSize="16sp"
+        />
+
+</LinearLayout>

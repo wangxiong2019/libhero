@@ -22,6 +22,7 @@ import com.hero.libhero.okhttp.https.ReqProgressCallBack;
 import com.hero.libhero.utils.ActivityUtil;
 import com.hero.libhero.utils.GlideUtil;
 import com.hero.libhero.utils.JsonUtil;
+import com.hero.libhero.utils.StatusBarUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,6 +74,10 @@ public class MainActivity extends BaseActivty {
 
     @Override
     public void initView() {
+        //设置侵入式状态栏
+        StatusBarUtils.translucent(mActivity);
+        //设置状态栏字体黑色
+        StatusBarUtils.setStatusBarLightMode(mActivity);
 
         //EventBus    1.注册事件
         EventBus.getDefault().register(this);
