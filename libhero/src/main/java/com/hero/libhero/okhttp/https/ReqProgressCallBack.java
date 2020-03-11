@@ -6,5 +6,6 @@ public interface ReqProgressCallBack extends MyCallBack {
     /**
      * 响应进度更新
      */
-    void progressBack(long total, long current);
+    void progressBack(long total, long current,int percentage);
+
 }

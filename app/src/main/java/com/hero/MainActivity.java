@@ -1,9 +1,12 @@
 package com.hero;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,7 +41,6 @@ import butterknife.OnClick;
 import static com.hero.libhero.utils.GlobalUtil.getTwoPrice;
 
 public class MainActivity extends BaseActivty {
-    public static String apt_ip = "https://api.ipaotui.com/index.php?m=Api&c=Common&a=checkUpdate";//正式服务器地址
 
 
     /**
@@ -88,7 +90,7 @@ public class MainActivity extends BaseActivty {
         PermissionsUtil.requestPermission(MainActivity.this, new PermissionListener() {
             @Override
             public void permissionGranted(@NonNull String[] permission) {
-                file();
+
             }
 
             @Override
@@ -105,11 +107,21 @@ public class MainActivity extends BaseActivty {
 
 
     //Butterknife 自动生成的
-    @OnClick({R.id.tv_res, R.id.tv_res2, R.id.tv_res3})
+    @OnClick({R.id.tv_res, R.id.tv_res2,
+            R.id.tv_res3,R.id.tv_todownload,
+            R.id.tv_toupload})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_res:
                 intent = new Intent(mContext, EventBusAc.class);
+                startActivity(intent);
+                break;
+            case R.id.tv_toupload:
+                intent = new Intent(mContext, UploadAc.class);
+                startActivity(intent);
+                break;
+            case R.id.tv_todownload:
+                intent = new Intent(mContext, DownloadAc.class);
                 startActivity(intent);
                 break;
             case R.id.tv_res2:
@@ -226,11 +238,7 @@ public class MainActivity extends BaseActivty {
     }
 
 
-    private void file() {
-        //setPostParameAndFile();
-        //uploadProgressParameAndFile();
-        //downLoadProgressFile();
-    }
+
 
 
     private void doGet() {
@@ -270,7 +278,13 @@ public class MainActivity extends BaseActivty {
                 OkHttpUtil.doPostBody(http_url, map, new MyCallBack() {
                     @Override
                     public void failBack(String res_msg, int res_code) {
-                        tv_res0.setText(res_msg);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tv_res0.setText(res_msg);
+                            }
+                        });
                     }
 
                     @Override
@@ -319,99 +333,8 @@ public class MainActivity extends BaseActivty {
 
         });
     }
-    //上传文件 不带进度
-    private void setPostParameAndFile() {
-        String pic_path = Environment.getExternalStorageDirectory() + "/app_bingbinggou/1577351213426.JPEG";
-
-        File file = new File(pic_path);
-        if (file.exists()) {
-            Log.e("file=", "文件存在" + pic_path);
-            String http_url = "http://www.fastpaotui.com/App/FileApi/UploadPic";
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("file_type", "wang");
-            map.put("picture", file);
-
-            OkHttpUtil.setPostParameAndFile(http_url, map, new MyCallBack() {
-                @Override
-                public void failBack(String res_msg, int res_code) {
-
-                }
-
-                @Override
-                public void successBack(String res_data) {
-                    tv_res2.setText("上传成功");
-                }
 
 
-            });
-        }
-    }
-    //上传文件件 带进度
-    private void uploadProgressParameAndFile() {
-        String pic_path = Environment.getExternalStorageDirectory() + "/tencent/QQfile_recv/ipaotui_new.apk";
-
-        File file = new File(pic_path);
-        if (file.exists()) {
-            Log.e("file=", "文件存在" + pic_path);
-            String http_url = "http://www.fastpaotui.com/App/FileApi/UploadFile";
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("file_type", "apk");
-            map.put("file", file);
-
-            OkHttpUtil.uploadProgressParameAndFile(http_url, map, new ReqProgressCallBack() {
-                @Override
-                public void failBack(String res_msg, int res_code) {
-                    tv_res3.setText(res_msg);
-                }
-
-                @Override
-                public void successBack(String res_data) {
-                    tv_res3.setText("上传成功");
-                }
-
-                @Override
-                public void progressBack(long total, long current) {
-                    float c = (float) (current / 1024.0 / 1024.0);
-                    float t = (float) (total / 1024.0 / 1024.0);
-
-                    tv_res3.setText("上传进度：" + getTwoPrice(c) + "MB/" + getTwoPrice(t) + "MB");
-                }
-
-
-            });
-        }
-    }
-    //下载文件 带进度
-    private void downLoadProgressFile() {
-        String file_path = "http://www.fastpaotui.com/uploadfile/wang/ipaotui_new.apk";
-        ActivityUtil.IsHasSD();
-        String save_path = ActivityUtil.mSavePath;
-
-        OkHttpUtil.downLoadProgressFile(file_path, save_path, new ReqProgressCallBack() {
-            @Override
-            public void failBack(String res_msg, int res_code) {
-                tv_res2.setText(res_msg);
-            }
-
-            @Override
-            public void successBack(String res_data) {
-                tv_res2.setText("下载完成");
-
-            }
-
-            @Override
-            public void progressBack(long total, long current) {
-                float c = (float) (current / 1024.0 / 1024.0);
-                float t = (float) (total / 1024.0 / 1024.0);
-
-                tv_res2.setText("下载进度：" + getTwoPrice(c) + "MB/" + getTwoPrice(t) + "MB");
-            }
-
-
-        });
-    }
 
 
     //EventBus   3.实现事件处理

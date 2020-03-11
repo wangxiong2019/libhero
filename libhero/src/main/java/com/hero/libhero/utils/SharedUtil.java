@@ -96,6 +96,25 @@ public class SharedUtil {
         return value;
     }
 
+
+    public static void putLong(String key, long value) {
+        //声明并获取一个SharedPreferences对象，模式为私有模式
+        Context context = LibHeroInitializer.appContext;
+        SharedPreferences sp = context.getSharedPreferences(AppName, Context.MODE_PRIVATE);
+
+        sp.edit().putLong(key, value).commit();
+
+    }
+
+    public static long getLong(String key) {
+        Context context = LibHeroInitializer.appContext;
+        SharedPreferences sp = context.getSharedPreferences(AppName, Context.MODE_PRIVATE);
+        //defValue 如果没有得到值就返回defValue，这是没有值时防止返回null。
+        long value = sp.getLong(key, 0);
+
+        return value;
+    }
+
     public static void clearData(String str) {
         Context context = LibHeroInitializer.appContext;
         SharedPreferences sp = context.getSharedPreferences(AppName, Context.MODE_PRIVATE);

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 import com.hero.libhero.utils.ActivityUtil;
 
@@ -41,4 +42,15 @@ public abstract class BaseActivty extends AppCompatActivity {
 
     public abstract int getLayout();
     public abstract void initView();
+
+    //按返回键
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+            ActivityUtil.FinishAct(mActivity);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

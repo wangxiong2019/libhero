@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -50,6 +51,11 @@ public class OkHttpUtil {
 
 
     private static int TIME_OUT = 45;
+
+
+    public static OkHttpClient getmOkHttpClient() {
+        return mOkHttpClient;
+    }
 
 
     public static void initOkHttp() {
@@ -286,6 +292,7 @@ public class OkHttpUtil {
         //创建Request
         Request request = new Request.Builder()
                 .url(http_url)
+                .header("RANGE", "bytes=" + mAlreadyUpLength + "-" + mTotalLength)
                 .post(body)
                 .build();
 
@@ -441,8 +448,9 @@ public class OkHttpUtil {
 
     }
 
+
     public static void enqueueRequest(Request request, final MyCallBack myCallBack) {
-        Call call = mOkHttpClient.newCall(request);
+        Call  call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, IOException e) {
@@ -455,12 +463,6 @@ public class OkHttpUtil {
                         LogUtil.e(e.getMessage());
                         String message = e.getMessage();
                         myCallBack.failBack(message, -1);
-
-//                        if (message.contains("Failed to connect to")) {
-//                            myCallBack.failBack(message, -1);
-//                        } else {
-//                            myCallBack.failBack("onFailure=" + e.getCause().getMessage(), -1);
-//                        }
 
                     }
                 });
@@ -503,10 +505,16 @@ public class OkHttpUtil {
      * @param //<T>
      * @return
      */
+
+    public static long mAlreadyUpLength = 0;
+    public static long mTotalLength = 0;
+
+
+
     private static RequestBody createProgressRequestBody(
             final MediaType contentType, final File file,
             final ReqProgressCallBack callBack) {
-        return new RequestBody() {
+        RequestBody requestBody = new RequestBody() {
             @Override
             public MediaType contentType() {
                 return contentType;
@@ -536,6 +544,8 @@ public class OkHttpUtil {
                 }
             }
         };
+
+        return requestBody;
     }
 
     /**
@@ -546,12 +556,16 @@ public class OkHttpUtil {
      * @param callBack
      * @param //<T>
      */
-    private static void progressCallBack(final long total, final long current, final ReqProgressCallBack callBack) {
+    private static void progressCallBack(final long total, final long current,
+                                         final ReqProgressCallBack callBack) {
         mMainHandler.post(new Runnable() {
             @Override
             public void run() {
                 if (callBack != null) {
-                    callBack.progressBack(total, current);
+                    float aa = (float) current / total;
+                    int percentage = (int) (aa * 100);
+
+                    callBack.progressBack(total, current, percentage);
                 }
             }
         });
