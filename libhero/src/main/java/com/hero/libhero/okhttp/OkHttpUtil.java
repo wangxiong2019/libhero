@@ -136,7 +136,7 @@ public class OkHttpUtil {
             }
         }
 
-        Log.e("参数", http_url);
+        LogUtil.e("参数:"+ http_url);
         Request request = new Request.Builder()//创建Request 对象。
                 .url(http_url)
                 .get()
@@ -162,8 +162,8 @@ public class OkHttpUtil {
         String josnStr = JsonUtil.objToString(map);
 
         RequestBody jsonBody = RequestBody.create(JSON, josnStr);
-        Log.e("参数", "http_url=" + http_url);
-        Log.e("参数", "josnStr=" + josnStr);
+        LogUtil.e("参数:http_url=" + http_url);
+        LogUtil.e("参数:josnStr=" + josnStr);
         Request request = new Request.Builder()//创建Request 对象。
                 .url(http_url)
                 .post(jsonBody)//传递请求体
@@ -210,10 +210,10 @@ public class OkHttpUtil {
         if (null != map && map.size() > 0) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 formBody.add(entry.getKey(), entry.getValue());
-                Log.e("参数", entry.getKey() + "=" + entry.getValue());
+                LogUtil.e("参数:"+ entry.getKey() + "=" + entry.getValue());
             }
         }
-        Log.e("http_url", http_url);
+        LogUtil.e("http_url:"+ http_url);
         RequestBody body = formBody.build();
         Request.Builder builder = new Request.Builder();
         if (method.equals(METHOD_POST)) {
@@ -412,7 +412,7 @@ public class OkHttpUtil {
         if (getHeaderMap() != null) {
             for (Map.Entry<String, String> entry : getHeaderMap().entrySet()) {
                 mHeaderBuild.add(entry.getKey(), entry.getValue());
-                Log.e("请求头", entry.getKey() + "=" + entry.getValue());
+                LogUtil.e("请求头:"+ entry.getKey() + "=" + entry.getValue());
             }
         }
 
@@ -430,9 +430,9 @@ public class OkHttpUtil {
 
 
         final Call call = mOkHttpClient.newCall(request);
-//            Log.e("execute返回code", response.code() + "");
-//            Log.e("execute返回isSuccessful", response.isSuccessful() + "");
-//            Log.e("execute返回message", response.message() + "");
+//            LogUtil.e("execute返回code", response.code() + "");
+//            LogUtil.e("execute返回isSuccessful", response.isSuccessful() + "");
+//            LogUtil.e("execute返回message", response.message() + "");
         try {
             final Response response = call.execute();
             if (response.isSuccessful()) {
@@ -479,7 +479,7 @@ public class OkHttpUtil {
                 LogUtil.e("enqueue返回message" + msg + "");
 
                 final String res = response.body().string();
-                Log.e("enqueue返回data", res);
+                LogUtil.e("enqueue返回data:"+ res);
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -536,7 +536,6 @@ public class OkHttpUtil {
                     for (long readCount; (readCount = source.read(buf, 2048)) != -1; ) {
                         sink.write(buf, readCount);
                         current += readCount;
-                        Log.e(TAG, "current------>" + current);
                         progressCallBack(remaining, current, callBack);
                     }
                 } catch (Exception e) {

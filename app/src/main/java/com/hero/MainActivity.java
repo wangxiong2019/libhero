@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,12 +24,13 @@ import com.hero.libhero.utils.ActivityUtil;
 import com.hero.libhero.utils.GlideUtil;
 import com.hero.libhero.utils.JsonUtil;
 import com.hero.libhero.utils.StatusBarUtils;
+import com.hero.libhero.view.FlipTextView;
+import com.hero.libhero.view.XToast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +38,6 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static com.hero.libhero.utils.GlobalUtil.getTwoPrice;
@@ -65,7 +66,8 @@ public class MainActivity extends BaseActivty {
     @BindView(R.id.iv_01)
     ImageView iv_01;
 
-
+    @BindView(R.id.ftv)
+    FlipTextView ftv;
 
     @Override
     public int getLayout() {
@@ -82,6 +84,9 @@ public class MainActivity extends BaseActivty {
         //EventBus    1.注册事件
         EventBus.getDefault().register(this);
 
+        XToast.Config.get().setGravity(Gravity.CENTER); //显示在屏幕中央
+        XToast.success(mContext,"显示成功").show();
+
         doGet();
 
         doPostBody();
@@ -91,6 +96,8 @@ public class MainActivity extends BaseActivty {
         initDb();
 
         pic();
+
+        ftvInit();
 
         PermissionsUtil.requestPermission(MainActivity.this, new PermissionListener() {
             @Override
@@ -103,6 +110,19 @@ public class MainActivity extends BaseActivty {
 
             }
         }, needPermissions);
+    }
+
+    //文字切换
+    private void ftvInit(){
+        int colorId=mActivity.getResources().getColor(R.color.colorPrimary);
+        ftv.setColorId(colorId);
+        ftv.setWait_Time(2000);
+
+        List<String> stringList = new ArrayList<>();
+        stringList.add("粘贴商品标题搜隐藏券拿返利");
+        stringList.add("购物之前搜一搜,能省还能赚");
+        ftv.setData(stringList);
+
     }
 
     private void pic(){

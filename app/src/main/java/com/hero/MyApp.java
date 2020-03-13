@@ -61,7 +61,6 @@ public class MyApp extends Application {
     private void initOkHttp() {
         Map<String, String> map_header = new HashMap<>();
         map_header.put("a_token", "1234");
-        //map_header.put("content-type", "application/x-www-form-urlencoded");
         new OkHttpUtil().setHeaderMap(map_header);
         OkHttpUtil.initOkHttp();
     }

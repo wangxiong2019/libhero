@@ -12,8 +12,10 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,12 +26,19 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.hero.libhero.R;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 
 public class Utils {
     private Utils() {
@@ -361,6 +370,34 @@ public class Utils {
             drawable.setColorFilter(colorFilter);
         }
         return colorFilter;
+    }
+
+
+
+    //吐司用到
+    public static Drawable tintIcon(@NonNull Drawable drawable, @ColorInt int tintColor) {
+        drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN);
+        return drawable;
+    }
+
+    public  static Drawable tint9PatchDrawableFrame(@NonNull Context context, @ColorInt int tintColor) {
+        final NinePatchDrawable toastDrawable = (NinePatchDrawable) getDrawable(context, R.drawable.xtoast_frame);
+        return tintIcon(toastDrawable, tintColor);
+    }
+
+    public  static void setBackground(@NonNull View view, Drawable drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            view.setBackground(drawable);
+        else
+            view.setBackgroundDrawable(drawable);
+    }
+
+ public    static Drawable getDrawable(@NonNull Context context, @DrawableRes int id) {
+        return AppCompatResources.getDrawable(context, id);
+    }
+
+   public static int getColor(@NonNull Context context, @ColorRes int color) {
+        return ContextCompat.getColor(context, color);
     }
 
 }
