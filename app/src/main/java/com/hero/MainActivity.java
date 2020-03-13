@@ -121,7 +121,9 @@ public class MainActivity extends BaseActivty {
         List<String> stringList = new ArrayList<>();
         stringList.add("粘贴商品标题搜隐藏券拿返利");
         stringList.add("购物之前搜一搜,能省还能赚");
+        stringList.add("第三行");
         ftv.setData(stringList);
+
 
     }
 
