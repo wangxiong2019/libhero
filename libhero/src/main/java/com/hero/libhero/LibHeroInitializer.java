@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.hero.libhero.mydb.XDb;
+import com.hero.libhero.okhttp.OkHttpUtil;
 
 public class LibHeroInitializer {
 
@@ -39,7 +40,7 @@ public class LibHeroInitializer {
             appContext = app.getApplicationContext();
 
             XDb.Ext.init(app,logShow);
-
+            OkHttpUtil.initOkHttp();
         }
     }
 

@@ -3,7 +3,6 @@ package com.hero.libhero.okhttp;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.okhttp.cookie.SimpleCookieJar;
@@ -16,7 +15,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +28,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Headers;
-import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -38,8 +38,6 @@ import okio.Buffer;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * @author qndroid
@@ -74,22 +72,20 @@ public class OkHttpUtil {
                 }
             });
 
-            /**
-             *  为所有请求添加请求头，看个人需求
-             */
-            //if (getHeaderMap() != null) {
-            okHttpClientBuilder.addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request request = chain.request()
-                            .newBuilder()
-                            // 标明发送本次请求的客户端
-                            .headers(getHeaders())
-                            .build();
-                    return chain.proceed(request);
-                }
-            });
-            //}
+
+            //拦截器
+//            okHttpClientBuilder.addInterceptor(new Interceptor() {
+//                @Override
+//                public Response intercept(Chain chain) throws IOException {
+//                    Request request = chain.request()
+//                            .newBuilder()
+//                            // 标明发送本次请求的客户端
+//                            .headers(getHeaders())
+//                            .build();
+//                    return chain.proceed(request);
+//                }
+//            });
+
 
             okHttpClientBuilder.cookieJar(new SimpleCookieJar());
             okHttpClientBuilder.connectTimeout(TIME_OUT, TimeUnit.SECONDS);//单位是秒
@@ -136,9 +132,10 @@ public class OkHttpUtil {
             }
         }
 
-        LogUtil.e("参数:"+ http_url);
+        LogUtil.e("参数:" + http_url);
         Request request = new Request.Builder()//创建Request 对象。
                 .url(http_url)
+                .headers(getHeaders())
                 .get()
                 .build();
 
@@ -166,6 +163,7 @@ public class OkHttpUtil {
         LogUtil.e("参数:josnStr=" + josnStr);
         Request request = new Request.Builder()//创建Request 对象。
                 .url(http_url)
+                .headers(getHeaders())
                 .post(jsonBody)//传递请求体
                 .build();
 
@@ -210,10 +208,10 @@ public class OkHttpUtil {
         if (null != map && map.size() > 0) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 formBody.add(entry.getKey(), entry.getValue());
-                LogUtil.e("参数:"+ entry.getKey() + "=" + entry.getValue());
+                LogUtil.e("参数:" + entry.getKey() + "=" + entry.getValue());
             }
         }
-        LogUtil.e("http_url:"+ http_url);
+        LogUtil.e("http_url:" + http_url);
         RequestBody body = formBody.build();
         Request.Builder builder = new Request.Builder();
         if (method.equals(METHOD_POST)) {
@@ -224,6 +222,7 @@ public class OkHttpUtil {
             builder.delete(body);
         }
 
+        builder.headers(getHeaders());
         builder.url(http_url);
 
         //创建Request 对象。
@@ -260,6 +259,7 @@ public class OkHttpUtil {
         //创建Request
         Request request = new Request.Builder()
                 .url(http_url)
+                .headers(getHeaders())
                 .post(body)
                 .build();
 
@@ -289,10 +289,14 @@ public class OkHttpUtil {
         }
         //创建RequestBody
         RequestBody body = builder.build();
+
+        Map<String, String> map_header = new HashMap<>();
+        map_header.put("RANGE", "bytes=" + mAlreadyUpLength + "-" + mTotalLength);
+        addHeader(map_header);
         //创建Request
         Request request = new Request.Builder()
                 .url(http_url)
-                .header("RANGE", "bytes=" + mAlreadyUpLength + "-" + mTotalLength)
+                .headers(getHeaders())
                 .post(body)
                 .build();
 
@@ -396,24 +400,35 @@ public class OkHttpUtil {
         });
     }
 
-    private static Map<String, String> headerMap;
+    private static List<Map<String, String>> headerList = new ArrayList<>();
 
-    public static Map<String, String> getHeaderMap() {
-        return headerMap;
+    public static void clearHeader() {
+        headerList.clear();
     }
 
-    public void setHeaderMap(Map<String, String> headerMap) {
-        this.headerMap = headerMap;
+    public static void addHeader(Map<String, String> headerMap) {
+        if (headerMap != null) {
+            headerList.add(headerMap);
+        }
     }
 
+
+    /**
+     * 为所有请求添加请求头，看个人需求
+     */
     public static Headers getHeaders() {
         //添加请求头
         Headers.Builder mHeaderBuild = new Headers.Builder();
-        if (getHeaderMap() != null) {
-            for (Map.Entry<String, String> entry : getHeaderMap().entrySet()) {
-                mHeaderBuild.add(entry.getKey(), entry.getValue());
-                LogUtil.e("请求头:"+ entry.getKey() + "=" + entry.getValue());
+        if (headerList.size() > 0) {
+            for (int i = 0; i < headerList.size(); i++) {
+                Map<String, String> headerMap = headerList.get(i);
+
+                for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                    mHeaderBuild.add(entry.getKey(), entry.getValue());
+                    LogUtil.e("请求头:" + entry.getKey() + "=" + entry.getValue());
+                }
             }
+
         }
 
         Headers mHeader = mHeaderBuild.build();
@@ -450,7 +465,7 @@ public class OkHttpUtil {
 
 
     public static void enqueueRequest(Request request, final MyCallBack myCallBack) {
-        Call  call = mOkHttpClient.newCall(request);
+        Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, IOException e) {
@@ -479,7 +494,7 @@ public class OkHttpUtil {
                 LogUtil.e("enqueue返回message" + msg + "");
 
                 final String res = response.body().string();
-                LogUtil.e("enqueue返回data:"+ res);
+                LogUtil.e("enqueue返回data:" + res);
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -508,7 +523,6 @@ public class OkHttpUtil {
 
     public static long mAlreadyUpLength = 0;
     public static long mTotalLength = 0;
-
 
 
     private static RequestBody createProgressRequestBody(

@@ -27,7 +27,7 @@ public class MyApp extends Application {
 
         LibHeroInitializer.init(this,true);
 
-        initOkHttp();
+
     }
 
 //    @Override
@@ -58,10 +58,5 @@ public class MyApp extends Application {
 
 
 
-    private void initOkHttp() {
-        Map<String, String> map_header = new HashMap<>();
-        map_header.put("a_token", "1234");
-        new OkHttpUtil().setHeaderMap(map_header);
-        OkHttpUtil.initOkHttp();
-    }
+
 }
