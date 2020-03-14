@@ -84,8 +84,10 @@ public class MainActivity extends BaseActivty {
         //EventBus    1.注册事件
         EventBus.getDefault().register(this);
 
+        int height=StatusBarUtils.getStatusBarHeight(mContext);
+
         XToast.Config.get().setGravity(Gravity.CENTER); //显示在屏幕中央
-        XToast.success(mContext,"显示成功").show();
+        XToast.success(mContext,"状态栏高度="+height).show();
 
         doGet();
 
