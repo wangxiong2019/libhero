@@ -207,7 +207,7 @@ public class OkHttpUtil {
         FormBody.Builder formBody = new FormBody.Builder();//创建表单请求体
         if (null != map && map.size() > 0) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                formBody.add(entry.getKey(), (String) entry.getValue());
+                formBody.add(entry.getKey(),  entry.getValue().toString());
                 LogUtil.e("参数:" + entry.getKey() + "=" + entry.getValue().toString());
             }
         }
