@@ -297,7 +297,7 @@ public class MainActivity extends BaseActivty {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Map<String, String> map = new HashMap<>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("platform", "android");
                 map.put("vesion", "4.0.0");
                 map.put("app", "apt");
@@ -339,7 +339,7 @@ public class MainActivity extends BaseActivty {
 
     private void doPostJsonStrAsyn() {
         //异步请求
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("platform", "android");
         map.put("vesion", "4.0.0");
         map.put("app", "apt");
