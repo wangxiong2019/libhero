@@ -108,20 +108,20 @@ public class OkHttpUtil {
     }
 
 
-    public static void doGetJsonStr(boolean isWenHao, String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doGetJsonStr(boolean isWenHao, String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getStr(isWenHao, http_url, map);
         executeRequest(request, myCallBack);
     }
 
-    public static void doGetJsonStrAsyn(boolean isWenHao, String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doGetJsonStrAsyn(boolean isWenHao, String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getStr(isWenHao, http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
-    private static Request getStr(boolean isWenHao, String http_url, Map<String, String> map) {
+    private static Request getStr(boolean isWenHao, String http_url, Map<String, Object> map) {
         String str = "";
         if (null != map && map.size() > 0) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
                 str = str + entry.getKey() + "=" + entry.getValue() + "&";
             }
             str = str.substring(0, str.length() - 1);
@@ -142,18 +142,18 @@ public class OkHttpUtil {
         return request;
     }
 
-    public static void doPostJsonStr(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doPostJsonStr(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getJsonStr(http_url, map);
         executeRequest(request, myCallBack);
     }
 
-    public static void doPostJsonStrAsyn(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doPostJsonStrAsyn(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getJsonStr(http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
     //后台可以使用Map 或对象接收
-    private static Request getJsonStr(String http_url, Map<String, String> map) {
+    private static Request getJsonStr(String http_url, Map<String, Object> map) {
         //数据类型为json格式，
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         String josnStr = JsonUtil.objToString(map);
@@ -180,35 +180,35 @@ public class OkHttpUtil {
      * 此时也应该有body对象，但body中的内容为空
      */
 
-    public static void doPostBody(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doPostBody(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_POST, http_url, map);
         executeRequest(request, myCallBack);
     }
 
 
-    public static void doPostBodyAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doPostBodyAsny(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_POST, http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
-    public static void doPutBodyAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doPutBodyAsny(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_PUT, http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
-    public static void doDeleteBodyAsny(String http_url, Map<String, String> map, MyCallBack myCallBack) {
+    public static void doDeleteBodyAsny(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_DELETE, http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
 
     //后台可以使用@RequestParam()接收
-    private static Request getBody(String method, String http_url, Map<String, String> map) {
+    private static Request getBody(String method, String http_url, Map<String, Object> map) {
         FormBody.Builder formBody = new FormBody.Builder();//创建表单请求体
         if (null != map && map.size() > 0) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                formBody.add(entry.getKey(), entry.getValue());
-                LogUtil.e("参数:" + entry.getKey() + "=" + entry.getValue());
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                formBody.add(entry.getKey(), (String) entry.getValue());
+                LogUtil.e("参数:" + entry.getKey() + "=" + entry.getValue().toString());
             }
         }
         LogUtil.e("http_url:" + http_url);
