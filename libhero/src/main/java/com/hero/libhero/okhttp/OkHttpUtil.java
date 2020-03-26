@@ -489,12 +489,12 @@ public class OkHttpUtil {
                 final int code = response.code();
                 final boolean isSucess = response.isSuccessful();
                 final String msg = response.message();
-                LogUtil.e("enqueue返回code" + code + "");
-                LogUtil.e("enqueue返回isSuccessful" + isSucess + "");
-                LogUtil.e("enqueue返回message" + msg + "");
+                LogUtil.e("enqueue返回code:" + code + "");
+                LogUtil.e("enqueue返回isSuccessful:" + isSucess + "");
+                LogUtil.e("enqueue返回message:" + msg + "");
 
                 final String res = response.body().string();
-                LogUtil.e("enqueue返回data:" + res);
+                LogUtil.e("enqueue返回data:\n" + res);
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {

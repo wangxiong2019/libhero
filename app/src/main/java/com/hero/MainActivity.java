@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.github.dfqin.grantor.PermissionListener;
 import com.github.dfqin.grantor.PermissionsUtil;
+import com.hero.adapter.AppleBean;
 import com.hero.libhero.mydb.DbUtil;
 import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.okhttp.OkHttpUtil;
@@ -26,10 +27,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import butterknife.BindView;
@@ -94,6 +97,58 @@ public class MainActivity extends BaseActivty {
 
         ftvInit();
 
+        file();
+
+        listToMapList();
+    }
+
+    //相同的list 按照相同的字段 进行再分组
+    private void listToMapList() {
+        List<AppleBean> appleList = new ArrayList<>();//存放apple对象集合
+
+        AppleBean apple1 = new AppleBean(1, "苹果1", new BigDecimal("3.25"), 10);
+        AppleBean apple2 = new AppleBean(1, "苹果2", new BigDecimal("1.35"), 20);
+        AppleBean apple3 = new AppleBean(1, "苹果3", new BigDecimal("1.35"), 15);
+
+        AppleBean apple4 = new AppleBean(3, "荔枝", new BigDecimal("9.99"), 40);
+
+
+        AppleBean apple5 = new AppleBean(2, "香蕉", new BigDecimal("2.89"), 30);
+        AppleBean apple6 = new AppleBean(2, "香蕉2", new BigDecimal("3.89"), 30);
+
+        appleList.add(apple6);
+        appleList.add(apple1);
+        appleList.add(apple2);
+        appleList.add(apple5);
+        appleList.add(apple3);
+        appleList.add(apple4);
+
+        //定义一个Map存放分组结果，key为分类名称，value为该分类出现的个数
+        Map<Integer, List<AppleBean>> resultMap = new HashMap<>();
+        for (AppleBean mUserBean : appleList) {
+            if (resultMap.containsKey(mUserBean.getId())) {
+                //map中存在此id，将数据存放当前key的map中
+                resultMap.get(mUserBean.getId()).add(mUserBean);
+            } else {
+                //map中不存在，新建key，用来存放数据
+                List<AppleBean> tmpList = new ArrayList<>();
+                tmpList.add(mUserBean);
+                resultMap.put(mUserBean.getId(), tmpList);
+            }
+        }
+
+
+        //遍历Map集合的方法，输出List分组后的结果
+        Set<Map.Entry<Integer, List<AppleBean>>> entrySet = resultMap.entrySet();
+        for (Map.Entry<Integer, List<AppleBean>> entry : entrySet) {
+            List<AppleBean> m = entry.getValue();
+            LogUtil.e("分组:" + entry.getKey() + ":" + JsonUtil.objToString(m));
+        }
+
+    }
+
+
+    private void file() {
         PermissionsUtil.requestPermission(MainActivity.this, new PermissionListener() {
             @Override
             public void permissionGranted(@NonNull String[] permission) {
