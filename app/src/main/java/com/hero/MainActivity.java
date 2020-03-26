@@ -1,16 +1,11 @@
 package com.hero;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.dfqin.grantor.PermissionListener;
@@ -19,12 +14,12 @@ import com.hero.libhero.mydb.DbUtil;
 import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.okhttp.OkHttpUtil;
 import com.hero.libhero.okhttp.https.MyCallBack;
-import com.hero.libhero.okhttp.https.ReqProgressCallBack;
-import com.hero.libhero.utils.ActivityUtil;
 import com.hero.libhero.utils.GlideUtil;
 import com.hero.libhero.utils.JsonUtil;
 import com.hero.libhero.utils.StatusBarUtils;
 import com.hero.libhero.view.FlipTextView;
+import com.hero.libhero.view.PayPassDialog;
+import com.hero.libhero.view.PayPassView;
 import com.hero.libhero.view.XToast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,8 +34,6 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.OnClick;
-
-import static com.hero.libhero.utils.GlobalUtil.getTwoPrice;
 
 public class MainActivity extends BaseActivty {
 
@@ -84,10 +77,10 @@ public class MainActivity extends BaseActivty {
         //EventBus    1.注册事件
         EventBus.getDefault().register(this);
 
-        int height=StatusBarUtils.getStatusBarHeight(mContext);
+        int height = StatusBarUtils.getStatusBarHeight(mContext);
 
         XToast.Config.get().setGravity(Gravity.CENTER); //显示在屏幕中央
-        XToast.success(mContext,"状态栏高度="+height).show();
+        XToast.success(mContext, "状态栏高度=" + height).show();
 
         doGet();
 
@@ -115,8 +108,8 @@ public class MainActivity extends BaseActivty {
     }
 
     //文字切换
-    private void ftvInit(){
-        int colorId=mActivity.getResources().getColor(R.color.colorPrimary);
+    private void ftvInit() {
+        int colorId = mActivity.getResources().getColor(R.color.colorPrimary);
         ftv.setColorId(colorId);
         ftv.setWait_Time(2000);
 
@@ -129,15 +122,15 @@ public class MainActivity extends BaseActivty {
 
     }
 
-    private void pic(){
-        String img_url="http://img.hb.aicdn.com/43adcee6fa8d59ceb3219f8e7bfc818abcda59b22c8f1-r2zIW3";
-        GlideUtil.loadGifOrImg(this,img_url,iv_01);
+    private void pic() {
+        String img_url = "http://img.hb.aicdn.com/43adcee6fa8d59ceb3219f8e7bfc818abcda59b22c8f1-r2zIW3";
+        GlideUtil.loadGifOrImg(this, img_url, iv_01);
     }
 
 
     //Butterknife 自动生成的
     @OnClick({R.id.tv_res, R.id.tv_res2,
-            R.id.tv_res3,R.id.tv_todownload,
+            R.id.tv_res3, R.id.tv_todownload,
             R.id.tv_toupload})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -154,10 +147,48 @@ public class MainActivity extends BaseActivty {
                 startActivity(intent);
                 break;
             case R.id.tv_res2:
+                payDialog();
                 break;
             case R.id.tv_res3:
                 break;
         }
+    }
+
+
+    /**
+     * 2 自定义方式
+     */
+    private void payDialog() {
+        final PayPassDialog dialog = new PayPassDialog(mContext, R.style.dialog_pay_theme);
+        //弹框自定义配置
+        dialog.setAlertDialog(false)
+                .setWindowSize(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.4f)
+                .setOutColse(false)
+                .setGravity(R.style.dialogOpenAnimation, Gravity.CENTER_VERTICAL);
+        //组合控件自定义配置
+        PayPassView payView = dialog.getPayViewPass();
+        //payView.setForgetText("忘记支付密码?");
+        payView.setHintText("请输入管理密码");
+        payView.setTvHintSize(20);
+//        payView.setForgetColor(getResources().getColor(R.color.colorAccent));
+//        payView.setForgetSize(16);
+        payView.setPayClickListener(new PayPassView.OnPayClickListener() {
+            @Override
+            public void onPassFinish(String passContent) {
+                dialog.dismiss();
+                XToast.success(mContext, passContent).show();
+            }
+
+            @Override
+            public void onPayClose() {
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onPayForget() {
+                dialog.dismiss();
+            }
+        });
     }
 
     DbUtil dbUtil;
@@ -207,8 +238,6 @@ public class MainActivity extends BaseActivty {
 
 
     }
-
-
 
 
     private class Download1 extends AsyncTask<String, Integer, String> {
@@ -267,9 +296,6 @@ public class MainActivity extends BaseActivty {
     }
 
 
-
-
-
     private void doGet() {
         String url = "https://www.baidu.com/";
 
@@ -289,9 +315,6 @@ public class MainActivity extends BaseActivty {
     }
 
 
-
-
-
     private void doPostBody() {
         //同步请求
         new Thread(new Runnable() {
@@ -302,7 +325,7 @@ public class MainActivity extends BaseActivty {
                 map.put("vesion", "4.0.0");
                 map.put("app", "apt");
 
-                String http_url="http://www.fastpaotui.com/App/CommonApi/PostRequestBody";
+                String http_url = "http://www.fastpaotui.com/App/CommonApi/PostRequestBody";
 
                 OkHttpUtil.doPostBody(http_url, map, new MyCallBack() {
                     @Override
@@ -362,8 +385,6 @@ public class MainActivity extends BaseActivty {
 
         });
     }
-
-
 
 
     //EventBus   3.实现事件处理

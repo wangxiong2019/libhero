@@ -11,5 +11,22 @@
     <color name="toast_normal_tint_color">#353A3E</color>
 
 
+    <!-- 常见颜色 -->
+    <!-- 透明 -->
+    <color name="transparent">#00000000</color>
 
+    <!-- 黑色 -->
+    <color name="black">#000000</color>
+    <!-- 白色 -->
+    <color name="white">#FFFFFF</color>
+    <!-- 红色 -->
+    <color name="red">#FF0000</color>
+    <!-- 蓝色 -->
+    <color name="blue">#0000FF</color>
+    <!--黄色 -->
+    <color name="yellow">#FFFF00</color>
+
+    <color name="grayc4">#c4c4c4</color>
+    <color name="graye3">#e3e7ee</color>
+    <color name="graye5">#e5e5e5</color>
 </resources>
