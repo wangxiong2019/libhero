@@ -100,6 +100,13 @@ public class MainActivity extends BaseActivty {
         file();
 
         listToMapList();
+
+
+        byte[] byBuffer = new byte[16];
+        String strInput = "ZLSCSXS000000000";
+        byBuffer = strInput.getBytes();
+
+        LogUtil.e("ZLSCSXS=" + byBuffer.length);
     }
 
     //相同的list 按照相同的字段 进行再分组
@@ -205,6 +212,9 @@ public class MainActivity extends BaseActivty {
                 payDialog();
                 break;
             case R.id.tv_res3:
+                intent = new Intent(mContext, NfcAc3.class);
+                intent.putExtra("text", "温州浩兴科技有限公司");
+                startActivity(intent);
                 break;
         }
     }

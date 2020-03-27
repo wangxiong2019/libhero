@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hero">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- 文件读取 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
+    <!-- nfc读取卡片 -->
+    <uses-permission android:name="android.permission.NFC" />
+    <!--    <uses-feature android:name="android.hardware.nfc" android:required="true"/> 添加了这句代码，会使得在应用商店下载应用是过滤掉不支持NFC功能的设备。-->
+
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -22,9 +30,53 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".EventBusAc"/>
-        <activity android:name=".DownloadAc"/>
-        <activity android:name=".UploadAc"/>
+        <activity android:name=".EventBusAc" />
+        <activity android:name=".DownloadAc" />
+        <activity android:name=".UploadAc" />
+
+
+        <activity
+            android:name=".NfcAc"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".NfcAc"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".NfcAc2"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".NfcAc3"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
