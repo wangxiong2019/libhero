@@ -102,14 +102,10 @@ public class MainActivity extends BaseActivty {
 
         listToMapList();
 
-        String aa = StringCharByteUtil.numToHex(123456777);
-        int bb = StringCharByteUtil.hexToNum(aa);
-        //
-        Integer num = 123456777;
-        byte[] bytes = aa.getBytes();
-        LogUtil.e("==bytes.length=" + bytes.length);
 
-        int2ByteArray(123456777);
+        String text="123456779";
+        StringCharByteUtil.strToHexStr(text);
+
     }
 
 
@@ -228,7 +224,7 @@ public class MainActivity extends BaseActivty {
                 payDialog();
                 break;
             case R.id.tv_res3:
-                intent = new Intent(mContext, NfcAc3.class);
+                intent = new Intent(mContext, NfcAc.class);
                 intent.putExtra("text", "温州浩兴科技有限公司");
                 startActivity(intent);
                 break;

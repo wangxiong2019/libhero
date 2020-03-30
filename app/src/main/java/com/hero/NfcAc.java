@@ -1,0 +1,145 @@
+package com.hero;
+
+import android.content.Intent;
+import android.widget.TextView;
+
+import com.hero.libhero.mydb.LogUtil;
+import com.hero.libhero.nfc.NfcUtil;
+import com.hero.libhero.nfc.StringCharByteUtil;
+
+import java.io.IOException;
+
+import butterknife.BindView;
+
+/**
+ * 创建 by hero
+ * 时间 2020/3/26
+ * 类名
+ */
+public class NfcAc extends BaseActivty {
+    @BindView(R.id.tv_01)
+    TextView tv_01;
+    @BindView(R.id.tv_02)
+    TextView tv_02;
+    @BindView(R.id.tv_03)
+    TextView tv_03;
+
+    @BindView(R.id.tv_04)
+    TextView tv_04;
+
+
+    private NfcUtil nfcUtil;
+
+    @Override
+    public int getLayout() {
+        return R.layout.ac_nfc;
+    }
+
+
+    @Override
+    public void initView() {
+        nfcUtil = new NfcUtil(mActivity);
+        if (nfcUtil.getmNfcAdapter() == null) {
+            tv_01.setText("不支持nfc功能");
+        }
+
+
+    }
+
+    /**
+     * 遇坑指南
+     * 1.鄙人所用的M1卡数据一个块为16字节，卡数据存储的是16进制的byte数组。读取的时候要将16进制byte数组转换为10进制的；写卡的时候要进行转换为16进制的byte数组，而且数据必须为16字节
+     * 2.第3块一般不进行数据存储（0、1、2、3块）
+     * 3.一般来说第0个扇区的第0块为卡商初始化数据，不能进行写操作
+     * 4.要关注Activity的声明周期。onNewIntent中要进行扫描卡片的处理，onResume要禁止前台卡片活动的调度处理， onPause要启用前台卡片活动的调度处理。
+     * 5.要修改密钥需要先校验密钥之后修改控制位数据、密钥数据。
+     */
+
+    int sectorIndex = 6;//第几个扇区
+    int blockIndex = 1;//第几个扇区中的第几块
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        String id = nfcUtil.readNFCId(intent);
+        tv_01.setText("id=" + id);
+
+        readTag(intent);
+
+        boolean isTrue = writeM1Block(intent);
+        if (isTrue == true) {
+            readM1Block(intent);
+        }
+
+        //readM1Block(intent);
+    }
+
+    private void readTag(Intent intent) {
+        String str = nfcUtil.readNFCFromTag(intent);
+        tv_03.setText("标签数据：" + str);
+    }
+
+    private void readM1Block(Intent intent) {
+        String str = null;
+        try {
+            str = nfcUtil.readM1Block(intent, sectorIndex, blockIndex);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        tv_03.setText("扇区数据：\n" + str);
+    }
+
+    private boolean writeM1Block(Intent intent) {
+
+        int text = 123456779;
+        String text2 = StringCharByteUtil.numToHex(text);
+        String text3 = "00";
+        byte[] bb = StringCharByteUtil.hexToByteArray(text2);
+        StringCharByteUtil.bytesToHexString(bb);
+        String text4 = "";
+        if (bb.length < 16) {
+            int num = 16 - bb.length;
+            for (int i = 0; i < num; i++) {
+                text4 = text4 + text3;
+            }
+        }
+        LogUtil.e("text4=" + text4);
+        bb = StringCharByteUtil.hexToByteArray(text4 + text2);
+        StringCharByteUtil.bytesToHexString(bb);
+
+        int sectorIndex = 6;//第几个扇区
+        int blockIndex = 1;//第几个扇区中的第几块
+
+        //总位置
+        int pos = 4 * sectorIndex + blockIndex;
+
+        try {
+            if (nfcUtil.writeM1Block(intent, pos, bb)) {
+                tv_02.setText("" + "写入成功");
+                return true;
+            } else {
+                tv_02.setText("" + "写入失败");
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        nfcUtil.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        nfcUtil.onResume();
+    }
+
+
+}

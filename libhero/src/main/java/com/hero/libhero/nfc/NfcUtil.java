@@ -16,11 +16,12 @@ import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.nfc.tech.NfcA;
 import android.nfc.tech.NfcB;
-import android.nfc.tech.NfcF;
 import android.os.Build;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.view.XToast;
@@ -77,8 +78,6 @@ public class NfcUtil {
                 {NfcA.class.getName()},
                 {NfcB.class.getName()},
                 {MifareClassic.class.getName()},};
-
-        LogUtil.e(" mTechLists" + NfcF.class.getName() + mTechList.length);
 
 
     }
@@ -334,184 +333,127 @@ public class NfcUtil {
      * @param block
      * @param blockbyte
      */
-    public boolean writeM1Block(Intent intent, int block, int bIndex, byte[] blockbyte) {
-
+    public boolean writeM1Block(Intent intent, int block, byte[] blockbyte) throws IOException {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        boolean isTrue = isMifareClassic(tag);
-        if (isTrue == false) {
-            return false;
-        }
-        LogUtil.e("blockbyte.length=" + blockbyte.length);
-
-        MifareClassic mifareClassic = MifareClassic.get(tag);
+        MifareClassic mTag = MifareClassic.get(tag);
 
         try {
-            mifareClassic.connect();
-            try {
-                if (m1Auth(mifareClassic, block)) {
-                    //写入第block个扇区 第block
-                    mifareClassic.writeBlock(bIndex, blockbyte);//写入到第四块
-                    LogUtil.e("writeBlock:" + "写入成功");
-                } else {
-                    LogUtil.e("没有找到密码");
-                    return false;
-                }
-            } catch (IllegalArgumentException e) {
-                LogUtil.e("IllegalArgumentException:" + e.getMessage());
+            mTag.connect();
+            boolean isAuth = false;
+            if (m1Auth(mTag, block / 4)) {
+                isAuth = true;
+            }
+
+            if (isAuth) {
+                mTag.writeBlock(block, blockbyte);
+                Toast.makeText(mActivity, "写入成功", Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                Log.e("writeBlock", "写入失败");
+
                 return false;
             }
+
         } catch (IOException e) {
+            e.printStackTrace();
+
             return false;
         } finally {
-            try {
-                mifareClassic.close();
-            } catch (IOException e) {
+            //释放卡片
+            mTag.close();
 
-            }
         }
-        return true;
     }
 
 
     /**
-     * 读扇区
-     *
-     * @return
+     * 读取M1卡片  某一扇区 某一块信息
      */
-    public String readM1Block(Intent intent, int sectorIndex, int bIndex2) {
-
+    public String readM1Block(Intent intent,int sectorIndex,int blockIndex) throws IOException {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-        MifareClassic mfc = MifareClassic.get(tag);
-        //读取TAG
+        MifareClassic mTag = MifareClassic.get(tag);
+        mTag.connect();
+        // 读取TAG
         try {
-            String metaInfo = "";
-            //Enable I/O operations to the tag from this TagTechnology object.
-            mfc.connect();
-            int type = mfc.getType();//获取TAG的类型
-            int sectorCount = mfc.getSectorCount();//获取TAG中包含的扇区数
-            String typeS = "";
-            switch (type) {
-                case MifareClassic.TYPE_CLASSIC:
-                    typeS = "TYPE_CLASSIC";
-                    break;
-                case MifareClassic.TYPE_PLUS:
-                    typeS = "TYPE_PLUS";
-                    break;
-                case MifareClassic.TYPE_PRO:
-                    typeS = "TYPE_PRO";
-                    break;
-                case MifareClassic.TYPE_UNKNOWN:
-                    typeS = "TYPE_UNKNOWN";
-                    break;
-            }
-            metaInfo += "卡片类型：" + typeS + "\n共" + sectorCount + "个扇区\n共" + mfc.getBlockCount() + "个块\n存储空间: " + mfc.getSize() + "B\n";
+            // 获取TAG中包含的扇区数
+            int sectorCount = mTag.getSectorCount();
+            for (int j = 0; j < sectorCount; j++) {
 
-            boolean auth = mfc.authenticateSectorWithKeyA(sectorIndex, MifareClassic.KEY_DEFAULT);
-            if (auth) {
-                metaInfo += "Sector " + sectorIndex + ":验证成功\n";
-                byte[] data = mfc.readBlock(bIndex2);
-                metaInfo += metaInfo + bytesToHexString(data) + "\n";
-            } else {
-                metaInfo += "Sector " + sectorIndex + ":验证失败:auth=" + auth + "\n";
-            }
-            LogUtil.e("metaInfo=" + metaInfo);
-            return metaInfo;
-        } catch (Exception e) {
-            LogUtil.e("Exception=" + e.getMessage());
-            XToast.error(mActivity, "Exception=" + e.getMessage()).show();
-        } finally {
-            if (mfc != null) {
-                try {
-                    mfc.close();
-                } catch (IOException e) {
+                if (j == sectorIndex) {
+                    int bCount;//当前扇区的块数
+                    int bIndex;//当前扇区第一块
+
+                    boolean isAuth = false;
+                    if (mTag.authenticateSectorWithKeyA(j, MifareClassic.KEY_DEFAULT)) {
+                        isAuth = true;
+                    } else if (mTag.authenticateSectorWithKeyB(j, MifareClassic.KEY_DEFAULT)) {
+                        isAuth = true;
+                    } else {
+                        LogUtil.e("扇区" + sectorIndex + "没有找到密码");
+                    }
+
+                    LogUtil.e("扇区" + sectorIndex);
+
+                    if (isAuth) {
+                        bCount = mTag.getBlockCountInSector(j);
+                        bIndex = mTag.sectorToBlock(j);
+                        for (int i = 0; i < bCount; i++) {
+
+//                            byte[] data = mTag.readBlock(bIndex);
+//                            String dataString = bytesToHexString(data);
+//                            Log.e(bIndex+"第" + i + "数据:", dataString);//convertHexToString(dataString));
+//                            //metaInfo.add(bytesToHexString(data));
+
+                            bIndex++;
+                            int pos = 4 * sectorIndex + blockIndex;
+                            if (pos == bIndex) {
+                                byte[] data2 = mTag.readBlock(pos);
+                                String dataString2 = StringCharByteUtil.bytesToHexString2(data2);
+                                Log.e("扇区" + sectorIndex+"位置：" + bIndex + "数据:", dataString2);
+                                dataString2 = clearZero(dataString2);
+                                return dataString2;
+                            }
+
+
+                        }
+                    } else {
+                        return "";
+                    }
                 }
             }
+            return "";
+        } catch (Exception e) {
+            Log.e("读取数据错误", e.getMessage());
+            e.printStackTrace();
+        } finally {
+            //释放卡片
+            mTag.close();
         }
         return null;
     }
 
+    //去掉字符串前面所有的 0
+    private String clearZero(String str) {
+        int len = str.length();//取得字符串的长度
+        int index = 0;//预定义第一个非零字符串的位置
 
-    public String readM1BlockAll(Intent intent) {
-
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        boolean isTrue = isMifareClassic(tag);
-        if (isTrue == false) {
-            return "";
+        char strs[] = str.toCharArray();// 将字符串转化成字符数组
+        for (int i = 0; i < len; i++) {
+            if ('0' != strs[i]) {
+                index = i;// 找到非零字符串并跳出
+                break;
+            }
         }
+        String strLast = str.substring(index, len);// 截取字符串
 
-
-        MifareClassic mfc = MifareClassic.get(tag);
-        //读取TAG
-        try {
-            String metaInfo = "";
-            //Enable I/O operations to the tag from this TagTechnology object.
-            mfc.connect();
-            int type = mfc.getType();//获取TAG的类型
-            int sectorCount = mfc.getSectorCount();//获取TAG中包含的扇区数
-            String typeS = "";
-            switch (type) {
-                case MifareClassic.TYPE_CLASSIC:
-                    typeS = "TYPE_CLASSIC";
-                    break;
-                case MifareClassic.TYPE_PLUS:
-                    typeS = "TYPE_PLUS";
-                    break;
-                case MifareClassic.TYPE_PRO:
-                    typeS = "TYPE_PRO";
-                    break;
-                case MifareClassic.TYPE_UNKNOWN:
-                    typeS = "TYPE_UNKNOWN";
-                    break;
-            }
-            metaInfo += "卡片类型：" + typeS + "\n共" + sectorCount + "个扇区\n共" + mfc.getBlockCount() + "个块\n存储空间: " + mfc.getSize() + "B\n";
-
-
-            //读取每一个扇区
-            for (int j = 0; j < sectorCount; j++) {
-                boolean auth = mfc.authenticateSectorWithKeyA(j, MifareClassic.KEY_DEFAULT);
-
-                int bCount;
-                int bIndex;
-                if (auth) {
-                    metaInfo += "Sector " + j + ":验证成功\n";
-                    // 读取扇区中的块
-                    bCount = mfc.getBlockCountInSector(j);
-                    //读取每一个扇区的每一块
-                    bIndex = mfc.sectorToBlock(j);
-                    for (int i = 0; i < bCount; i++) {
-                        byte[] data = mfc.readBlock(bIndex);
-                        metaInfo += "Block " + bIndex + " : "
-                                + bytesToHexString(data) + "\n";
-                        bIndex++;
-                    }
-                } else {
-                    metaInfo += "Sector " + j + ":验证失败\n";
-                }
-            }
-
-            LogUtil.e("metaInfo=" + metaInfo);
-
-            return metaInfo;
-        } catch (Exception e) {
-            XToast.error(mActivity, e.getMessage()).show();
-            return "Exception:" + e.getMessage();
-        } finally {
-
-            try {
-                if (mfc != null) {
-                    mfc.close();
-                }
-            } catch (IOException e) {
-            }
-
-        }
+        return strLast;
     }
+
 
     /**
      * 密码校验 这个扇区是否可以写入
      */
-    public boolean m1Auth(MifareClassic mTag, int position) throws IOException {
+    public static boolean m1Auth(MifareClassic mTag, int position) throws IOException {
         if (mTag.authenticateSectorWithKeyA(position, MifareClassic.KEY_DEFAULT)) {
             LogUtil.e("authenticateSectorWithKeyA");
             return true;
@@ -522,7 +464,7 @@ public class NfcUtil {
         return false;
     }
 
-    private String bytesToHexString(byte[] src) {
+    private static String bytesToHexString(byte[] src) {
         StringBuilder stringBuilder = new StringBuilder();
         if (src == null || src.length <= 0) {
             return null;

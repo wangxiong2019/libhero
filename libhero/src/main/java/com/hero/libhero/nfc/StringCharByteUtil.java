@@ -45,27 +45,7 @@ public class StringCharByteUtil {
     /**
      * 普通字符串转为16进制字符串方法
      */
-    public static String strTo16Str(String str2) {
-//        String hs = "";
-//
-//        try {
-//            byte[] byStr = str.getBytes("UTF-8");
-//
-//            for (int i = 0; i < byStr.length; i++) {
-//                String temp = "";
-//                temp = (Integer.toHexString(byStr[i] & 0xFF));
-//                if (temp.length() == 1) temp = "%0" + temp;
-//                else temp = "%" + temp;
-//                hs = hs + temp;
-//            }
-//            LogUtil.e("hs=" + hs.toUpperCase());
-//            return hs.toUpperCase();
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        return "";
+    public static String strToHexStr(String str2) {
 
         String str = "";
         for (int i = 0; i < str2.length(); i++) {
@@ -83,7 +63,7 @@ public class StringCharByteUtil {
      * @param s
      * @return
      */
-    public static String s16ToStr(String s) {
+    public static String hexToStr(String s) {
         if (s == null || s.equals("")) {
             return null;
         }
@@ -137,27 +117,6 @@ public class StringCharByteUtil {
         return string.toString();
     }
 
-    /**
-     * 字符串转换成为16进制(无需Unicode编码)
-     *
-     * @param str
-     * @return
-     */
-    public static String strToHexStr(String str) {
-        char[] chars = "0123456789ABCDEF".toCharArray();
-        StringBuilder sb = new StringBuilder("");
-        byte[] bs = str.getBytes();
-        int bit;
-        for (int i = 0; i < bs.length; i++) {
-            bit = (bs[i] & 0x0f0) >> 4;
-            sb.append(chars[bit]);
-            bit = bs[i] & 0x0f;
-            sb.append(chars[bit]);
-            // sb.append(' ');
-        }
-        LogUtil.e(str + "strToHexStr=" + sb.toString().trim());
-        return sb.toString().trim();
-    }
 
     /**
      * 16进制直接转换成为字符串(无需Unicode解码)
@@ -180,35 +139,62 @@ public class StringCharByteUtil {
     }
 
 
+
+    /////////////////////////////////////////
+
+
     /**
-     * 将字符串形式表示的十六进制数转换为byte数组
+     * hex字符串转byte数组
+     *
+     * @param inHex 待转换的Hex字符串
+     * @return 转换后的byte数组结果
      */
-    public static byte[] hexStringToBytes(String hex) {
-
-
-        int len = (hex.length() / 2);
-        byte[] result = new byte[len];
-        char[] achar = hex.toCharArray();
-        for (int i = 0; i < len; i++) {
-            int pos = i * 2;
-            result[i] = (byte) (charToByte(achar[pos]) << 4 | charToByte(achar[pos + 1]));
+    public static byte[] hexToByteArray(String inHex) {
+        int hexlen = inHex.length();
+        byte[] result;
+        if (hexlen % 2 == 1) {
+            //奇数
+            hexlen++;
+            result = new byte[(hexlen / 2)];
+            inHex = "0" + inHex;
+        } else {
+            //偶数
+            result = new byte[(hexlen / 2)];
         }
-        LogUtil.e("result.length=" + result.length);
+        int j = 0;
+        for (int i = 0; i < hexlen; i += 2) {
+            result[j] = hexToByte(inHex.substring(i, i + 2));
+            j++;
+        }
+        LogUtil.e("hexToByteArray-->result.length=" + result.length);
         return result;
     }
 
 
     /**
+     * Hex字符串转byte
+     *
+     * @param inHex 待转换的Hex字符串
+     * @return 转换后的byte
+     */
+    public static byte hexToByte(String inHex) {
+        return (byte) Integer.parseInt(inHex, 16);
+    }
+
+    /**
      * 将byte数组转换为字符串形式表示的十六进制数方便查看
      */
-    public static String bytesToString(byte[] bytes) {
+    public static String bytesToHexString(byte[] bytes) {
         StringBuffer sBuffer = new StringBuffer();
         for (int i = 0; i < bytes.length; i++) {
             String s = Integer.toHexString(bytes[i] & 0xff);
-            if (s.length() < 2)
+            if (s.length() < 2) {
                 sBuffer.append('0');
+            }
             sBuffer.append(s + " ");
+
         }
+        LogUtil.e("bytesToHexString-->sBuffer=" + sBuffer.toString());
         return sBuffer.toString();
     }
 
@@ -217,106 +203,23 @@ public class StringCharByteUtil {
     }
 
 
-    public static byte[] str2bytearray(String str) {
-        int length = str.length();
-        int arrlength = length >> 1;
-        if ((length & 1) == 1) {
-            arrlength++;
-        }
-        byte[] ret = new byte[arrlength];
-        int i = 0, j = 0;
-        char ch0, ch1;
-        if ((length & 1) == 1) {
-            ch1 = str.charAt(i++);
-            if (ch1 <= '9' && ch1 >= '0') {
-                ch1 -= '0';
-            } else if (ch1 >= 'A' && ch1 <= 'F') {
-                ch1 -= ('A' - 10);
-            }
-            ret[j++] = (byte) ch1;
-        }
-        for (; i < length; i += 2, j++) {
-            ch0 = str.charAt(i);
-            ch1 = str.charAt(i + 1);
-            if (ch0 <= '9' && ch0 >= '0') {
-                ch0 -= '0';
-            } else if (ch0 >= 'A' && ch0 <= 'F') {
-                ch0 -= ('A' - 10);
-            }
-            if (ch1 <= '9' && ch1 >= '0') {
-                ch1 -= '0';
-            } else if (ch1 >= 'A' && ch1 <= 'F') {
-                ch1 -= ('A' - 10);
-            }
-            ret[j] = (byte) ((ch0 << 4) | ch1);
-        }
-        LogUtil.e(str + "==ret.length=" + ret.length);
-        return ret;
-    }
-
-
-    public static void main(String[] args) {
-        String text = "ZLSCSXS";
-        String hexString = "EF EB EC EA ED E0 F0 FF F9 FE 01 10 A0 0A 0F AB ae 9e 9c 2c 30 ef ff ";
-        byte[] bytes = hexStringToBytes(hexString);
-        String sBuffer = bytesToString(bytes);
-        LogUtil.e(sBuffer);
-    }
-//////////////////////十六进制字符串转byte和byte[]//////////////////////////
-
     /**
-     * Hex转byte,hex只能含两个字符，如果是一个字符byte高位会是0
+     * 10进制字符序列转换为16进制字符串
      */
-    public static byte hexTobyte(String hex) {
-        return (byte) Integer.parseInt(hex, 16);
-    }
-
-    /**
-     * Hex转byte[]，两种情况，Hex长度为奇数最后一个字符会被舍去
-     */
-    public static byte[] hexTobytes(String hex) {
-        if (hex.length() < 1) {
+    public static String bytesToHexString2(byte[] src) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (src == null || src.length <= 0) {
             return null;
-        } else {
-            byte[] result = new byte[hex.length() / 2];
-            int j = 0;
-            for (int i = 0; i < hex.length(); i += 2) {
-                result[j++] = (byte) Integer.parseInt(hex.substring(i, i + 2), 16);
-            }
-            LogUtil.e("result.length=" + result.length);
-            return result;
         }
+        char[] buffer = new char[2];
+        for (int i = 0; i < src.length; i++) {
+            buffer[0] = Character.forDigit((src[i] >>> 4) & 0x0F, 16);
+            buffer[1] = Character.forDigit(src[i] & 0x0F, 16);
+            System.out.println(buffer);
+            stringBuilder.append(buffer);
+        }
+        return stringBuilder.toString();
     }
 
 
-//////////////////byte和byte[]转十六进制字符串/////////////////////////
-
-    /**
-     * byte转Hex
-     */
-    public static String byteToHex(byte b) {
-        String hex = Integer.toHexString(b & 0xFF);
-        if (hex.length() < 2) {
-            hex = "0" + hex;
-        }
-        return hex;
-    }
-
-    /**
-     * byte[]转Hex
-     */
-    public static String bytesToHex(byte[] b) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < b.length; i++) {
-            String hex = Integer.toHexString(b[i] & 0xFF);
-            if (hex.length() < 2) {
-                hex = "0" + hex;
-            }
-            sb.append(hex.toUpperCase());
-        }
-
-        return sb.toString();
-    }
-
-    ////////////////////////////////////////////
 }
