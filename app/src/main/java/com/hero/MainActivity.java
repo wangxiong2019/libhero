@@ -13,6 +13,7 @@ import com.github.dfqin.grantor.PermissionsUtil;
 import com.hero.adapter.AppleBean;
 import com.hero.libhero.mydb.DbUtil;
 import com.hero.libhero.mydb.LogUtil;
+import com.hero.libhero.nfc.StringCharByteUtil;
 import com.hero.libhero.okhttp.OkHttpUtil;
 import com.hero.libhero.okhttp.https.MyCallBack;
 import com.hero.libhero.utils.GlideUtil;
@@ -101,13 +102,28 @@ public class MainActivity extends BaseActivty {
 
         listToMapList();
 
+        String aa = StringCharByteUtil.numToHex(123456777);
+        int bb = StringCharByteUtil.hexToNum(aa);
+        //
+        Integer num = 123456777;
+        byte[] bytes = aa.getBytes();
+        LogUtil.e("==bytes.length=" + bytes.length);
 
-        byte[] byBuffer = new byte[16];
-        String strInput = "ZLSCSXS000000000";
-        byBuffer = strInput.getBytes();
-
-        LogUtil.e("ZLSCSXS=" + byBuffer.length);
+        int2ByteArray(123456777);
     }
+
+
+    public static byte[] int2ByteArray(int i) {
+        byte[] result = new byte[4];
+        result[0] = (byte) ((i >> 24) & 0xFF);
+        result[1] = (byte) ((i >> 16) & 0xFF);
+        result[2] = (byte) ((i >> 8) & 0xFF);
+        result[3] = (byte) (i & 0xFF);
+
+        LogUtil.e("==result.length=" + result.length);
+        return result;
+    }
+
 
     //相同的list 按照相同的字段 进行再分组
     private void listToMapList() {

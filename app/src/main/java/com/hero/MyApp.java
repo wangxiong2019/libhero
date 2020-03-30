@@ -1,14 +1,9 @@
 package com.hero;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.res.Configuration;
 
 import com.hero.libhero.LibHeroInitializer;
-import com.hero.libhero.okhttp.OkHttpUtil;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.hero.libhero.keepalive.AliveJobService;
 
 public class MyApp extends Application {
 
@@ -25,11 +20,15 @@ public class MyApp extends Application {
 
         //RePlugin.App.onCreate();
 
-        LibHeroInitializer.init(this,true);
+        LibHeroInitializer.init(this, true);
 
-
+        //保活服务
+        pullAliveService();
     }
 
+    private void pullAliveService() {
+        AliveJobService.start(this);
+    }
 //    @Override
 //    public void onLowMemory() {
 //        super.onLowMemory();
@@ -55,8 +54,6 @@ public class MyApp extends Application {
 //        /* Not need to be called if your application's minSdkVersion > = 14 */
 //        RePlugin.App.onConfigurationChanged(config);
 //    }
-
-
 
 
 }

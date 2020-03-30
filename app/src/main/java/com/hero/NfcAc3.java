@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.widget.TextView;
 
 import com.hero.libhero.nfc.NfcUtil;
+import com.hero.libhero.nfc.StringCharByteUtil;
 
 import butterknife.BindView;
+
+import static com.hero.libhero.nfc.StringCharByteUtil.hexStringToBytes;
 
 /**
  * 创建 by hero
@@ -38,10 +41,12 @@ public class NfcAc3 extends BaseActivty {
         if (nfcUtil.getmNfcAdapter() == null) {
             tv_01.setText("不支持nfc功能");
         }
+
+
     }
 
-    int sectorIndex = 3;//第几个扇区
-    int bIndex = 2;//第几个扇区中的第几块
+    int sectorIndex = 4;//第几个扇区
+    int bIndex = 3;//第几个扇区中的第几块
     String text = "";//"9966332211445567";
 
     @Override
@@ -53,9 +58,9 @@ public class NfcAc3 extends BaseActivty {
 
         //readTag(intent);
 
-        //writeM1Block(intent);
+        writeM1Block(intent);
 
-        readM1Block(intent);
+        //readM1Block(intent);
 
         tv_04.setText("值：" + nfcUtil.readM1BlockAll(intent));
     }
@@ -67,7 +72,7 @@ public class NfcAc3 extends BaseActivty {
 
     private void readM1Block(Intent intent) {
         String str = nfcUtil.readM1Block(intent, sectorIndex, bIndex);
-        tv_04.setText("扇区数据：\n" + str);
+        tv_03.setText("扇区数据：\n" + str);
     }
 
     private void writeM1Block(Intent intent) {
@@ -79,7 +84,7 @@ public class NfcAc3 extends BaseActivty {
 //        StringCharByteUtil.hexTobytes(cc);// text.getBytes();
 
         //bb=StringCharByteUtil.str2bytearray(text);
-        //bb = "9966332211445567".getBytes();
+        bb = "9966332211445567".getBytes();
 
 
         if (nfcUtil.writeM1Block(intent, sectorIndex, bIndex, bb)) {

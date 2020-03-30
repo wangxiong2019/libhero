@@ -8,8 +8,6 @@ import static com.hero.libhero.mydb.XDb.logShow;
 
 public class LogUtil {
     public static String customTagPrefix = "libhero_log";
-    
-
 
 
     private LogUtil() {
@@ -27,6 +25,7 @@ public class LogUtil {
 
     public static void d(String content) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.d(tag, content);
@@ -34,6 +33,7 @@ public class LogUtil {
 
     public static void d(String content, Throwable tr) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.d(tag, content, tr);
@@ -41,6 +41,7 @@ public class LogUtil {
 
     public static void e(String content) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.e(tag, content);
@@ -55,6 +56,7 @@ public class LogUtil {
 
     public static void i(String content) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.i(tag, content);
@@ -62,6 +64,7 @@ public class LogUtil {
 
     public static void i(String content, Throwable tr) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.i(tag, content, tr);
@@ -69,6 +72,7 @@ public class LogUtil {
 
     public static void v(String content) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.v(tag, content);
@@ -76,6 +80,7 @@ public class LogUtil {
 
     public static void v(String content, Throwable tr) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.v(tag, content, tr);
@@ -83,6 +88,7 @@ public class LogUtil {
 
     public static void w(String content) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.w(tag, content);
@@ -90,6 +96,7 @@ public class LogUtil {
 
     public static void w(String content, Throwable tr) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.w(tag, content, tr);
@@ -97,6 +104,7 @@ public class LogUtil {
 
     public static void w(Throwable tr) {
         if (!logShow) return;
+
         String tag = generateTag();
 
         Log.w(tag, tr);
@@ -105,6 +113,7 @@ public class LogUtil {
 
     public static void wtf(String content) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.wtf(tag, content);
@@ -112,6 +121,7 @@ public class LogUtil {
 
     public static void wtf(String content, Throwable tr) {
         if (!logShow) return;
+        if (TextUtils.isEmpty(content)) return;
         String tag = generateTag();
 
         Log.wtf(tag, content, tr);

@@ -2,12 +2,46 @@ package com.hero.libhero.nfc;
 
 import com.hero.libhero.mydb.LogUtil;
 
+import java.math.BigInteger;
+
 /**
  * 创建 by hero
  * 时间 2020/3/27
  * 类名 字符串互转
  */
 public class StringCharByteUtil {
+
+    /*
+     * 字节转10进制
+     */
+    public static int byte2Int(byte b) {
+        int r = (int) b;
+        return r;
+    }
+
+    /*
+     * 10进制转字节
+     */
+    public static byte int2Byte(int i) {
+        byte r = (byte) i;
+        return r;
+    }
+
+    //10进制数字转换为16进制
+    public static String numToHex(int num) {
+        String hex = Integer.toHexString(num);
+        LogUtil.e(num + "==numToHex=" + hex);
+        return hex;
+    }
+
+    //16进制字符转换为10进制数字
+    public static int hexToNum(String hexs) {
+        BigInteger bigint = new BigInteger(hexs, 16);
+        int numb = bigint.intValue();
+        LogUtil.e(hexs + "==numToHex=" + numb);
+        return numb;
+    }
+
     /**
      * 普通字符串转为16进制字符串方法
      */
@@ -121,7 +155,7 @@ public class StringCharByteUtil {
             sb.append(chars[bit]);
             // sb.append(' ');
         }
-        LogUtil.e("strToHexStr=" + sb.toString().trim());
+        LogUtil.e(str + "strToHexStr=" + sb.toString().trim());
         return sb.toString().trim();
     }
 
@@ -216,7 +250,7 @@ public class StringCharByteUtil {
             }
             ret[j] = (byte) ((ch0 << 4) | ch1);
         }
-        LogUtil.e("ret.length=" + ret.length);
+        LogUtil.e(str + "==ret.length=" + ret.length);
         return ret;
     }
 
