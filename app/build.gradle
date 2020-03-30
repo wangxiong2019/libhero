@@ -27,14 +27,7 @@ android {
         def alias = "dsjsknx9a1"
         def password = "dsjsknx9a1"
         def filePath = "../dsjsknx9a1.jks"  //签名文件路径
-        debug {
-            keyAlias alias
-            keyPassword password
-            storeFile file(filePath)
-            storePassword(password)
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
+
         release {
             keyAlias alias
             keyPassword password
@@ -53,7 +46,7 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
 
 
