@@ -8,6 +8,7 @@ import com.hero.libhero.nfc.NfcUtil;
 import com.hero.libhero.nfc.StringCharByteUtil;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import butterknife.BindView;
 
@@ -62,17 +63,53 @@ public class NfcAc extends BaseActivty {
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        String id = nfcUtil.readNFCId(intent);
-        tv_01.setText("id=" + id);
+        try {
+            String id = nfcUtil.readNFCId(intent);
+            tv_01.setText("id=" + id);
 
-        readTag(intent);
+            readTag(intent);
 
-        boolean isTrue = writeM1Block(intent);
-        if (isTrue == true) {
-            readM1Block(intent);
+            boolean isTrue = writeM1Block(intent);
+            if (isTrue == true) {
+                readM1Block(intent);
+            }
+
+            //nfcUtil.clearNTAG4to39(intent);
+
+            NTAG(intent);
+
+
+        } catch (NullPointerException e) {
+            LogUtil.e("NullPointerException=" + e.getMessage());
         }
 
         //readM1Block(intent);
+    }
+
+    private void NTAG(Intent intent) {
+
+
+
+        //NTAG213 读写
+        int page = 4;
+        String text = "1234567";//什么读写啊
+        //c4e3bac3
+        boolean isWriteNTAG = nfcUtil.writeNTAG213(intent, page, text);
+
+        if (isWriteNTAG == true) {
+
+            byte[] bytes = text.getBytes(Charset.forName("GB2312"));
+            int len = bytes.length;
+            //一个 page  只能写入4个字节（相当于GB2312格式两个汉字）
+            int yu = len % 4;//取余
+            int num = len / 4;
+            if (yu > 0) {
+                num = num + 1;
+            }
+            LogUtil.e("num=" + num);
+            tv_04.setText(nfcUtil.readNTAG213(intent, num));
+        }
+
     }
 
     private void readTag(Intent intent) {
@@ -92,7 +129,7 @@ public class NfcAc extends BaseActivty {
 
     private boolean writeM1Block(Intent intent) {
 
-        int text = 123456779;
+        int text = 32345677;
         String text2 = StringCharByteUtil.numToHex(text);
         String text3 = "00";
         byte[] bb = StringCharByteUtil.hexToByteArray(text2);

@@ -60,6 +60,10 @@ public class MainActivity extends BaseActivty {
     TextView tv_res2;
     @BindView(R.id.tv_res3)
     TextView tv_res3;
+    @BindView(R.id.tv_change)
+    TextView tv_change;
+
+
     @BindView(R.id.iv_01)
     ImageView iv_01;
 
@@ -109,9 +113,12 @@ public class MainActivity extends BaseActivty {
         //人为崩溃
         List<String> list = new ArrayList<>();
         //LogUtil.e("list" + list.get(2));
+
+        String aa = StringCharByteUtil.strToHexStr("你好");
+        tv_change.setText("你好-->hex:"+aa + "");
+
+
     }
-
-
 
 
     //相同的list 按照相同的字段 进行再分组
