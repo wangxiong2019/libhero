@@ -129,10 +129,10 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
 
-    //google字符串解析框架
-    implementation 'com.google.code.gson:gson:2.8.0'
 
 
-    //360插件化 第二步
-    //implementation 'com.qihoo360.replugin:replugin-host-lib:2.2.4'
+    //腾讯异常捕捉
+    // -dontwarn com.tencent.bugly.**
+    //-keep public class com.tencent.bugly.**{*;}
+    implementation files('libs/bugly_crash_release.jar')
 }

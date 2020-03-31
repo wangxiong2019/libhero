@@ -1,59 +1,79 @@
 package com.hero;
 
 import android.app.Application;
+import android.content.Context;
+import android.text.TextUtils;
 
 import com.hero.libhero.LibHeroInitializer;
 import com.hero.libhero.keepalive.AliveJobService;
+import com.tencent.bugly.crashreport.CrashReport;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class MyApp extends Application {
-
-//    @Override
-//    protected void attachBaseContext(Context base) {
-//        super.attachBaseContext(base);
-//        //360插件化 第三步
-//        RePlugin.App.attachBaseContext(this);
-//    }
+    Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        //RePlugin.App.onCreate();
+        context = getApplicationContext();
 
         LibHeroInitializer.init(this, true);
 
         //保活服务
         pullAliveService();
+
+
+        initCrash();
+    }
+
+
+    private void initCrash() {
+// 获取当前包名
+        String packageName = context.getPackageName();
+// 获取当前进程名
+        String processName = getProcessName(android.os.Process.myPid());
+// 设置是否为上报进程
+        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(context);
+        strategy.setUploadProcess(processName == null || processName.equals(packageName));
+// 初始化Bugly
+        CrashReport.initCrashReport(context, "a93d992f1e", true, strategy);
+    }
+
+    /**
+     * 获取进程号对应的进程名
+     *
+     * @param pid 进程号
+     * @return 进程名
+     */
+    private static String getProcessName(int pid) {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader("/proc/" + pid + "/cmdline"));
+            String processName = reader.readLine();
+            if (!TextUtils.isEmpty(processName)) {
+                processName = processName.trim();
+            }
+            return processName;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        }
+        return null;
     }
 
     private void pullAliveService() {
-        AliveJobService.start(this);
+        AliveJobService.start(context);
     }
-//    @Override
-//    public void onLowMemory() {
-//        super.onLowMemory();
-//
-//        /* Not need to be called if your application's minSdkVersion > = 14 */
-//        RePlugin.App.onLowMemory();
-//
-//    }
-//
-//    @Override
-//    public void onTrimMemory(int level) {
-//        super.onTrimMemory(level);
-//
-//        /* Not need to be called if your application's minSdkVersion > = 14 */
-//        RePlugin.App.onTrimMemory(level);
-//
-//    }
-//
-//    @Override
-//    public void onConfigurationChanged(Configuration config) {
-//        super.onConfigurationChanged(config);
-//
-//        /* Not need to be called if your application's minSdkVersion > = 14 */
-//        RePlugin.App.onConfigurationChanged(config);
-//    }
 
 
 }

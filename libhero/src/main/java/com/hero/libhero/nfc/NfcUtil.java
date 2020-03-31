@@ -369,7 +369,7 @@ public class NfcUtil {
     /**
      * 读取M1卡片  某一扇区 某一块信息
      */
-    public String readM1Block(Intent intent,int sectorIndex,int blockIndex) throws IOException {
+    public String readM1Block(Intent intent, int sectorIndex, int blockIndex) throws IOException {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         MifareClassic mTag = MifareClassic.get(tag);
         mTag.connect();
@@ -383,38 +383,32 @@ public class NfcUtil {
                     int bCount;//当前扇区的块数
                     int bIndex;//当前扇区第一块
 
-                    boolean isAuth = false;
-                    if (mTag.authenticateSectorWithKeyA(j, MifareClassic.KEY_DEFAULT)) {
-                        isAuth = true;
-                    } else if (mTag.authenticateSectorWithKeyB(j, MifareClassic.KEY_DEFAULT)) {
-                        isAuth = true;
-                    } else {
-                        LogUtil.e("扇区" + sectorIndex + "没有找到密码");
-                    }
+                    boolean isAuth = m1Auth(mTag, sectorIndex);
+//                    if(m1Auth(mTag,sectorIndex))
+//                    if (mTag.authenticateSectorWithKeyA(j, MifareClassic.KEY_DEFAULT)) {
+//                        isAuth = true;
+//                    } else if (mTag.authenticateSectorWithKeyB(j, MifareClassic.KEY_DEFAULT)) {
+//                        isAuth = true;
+//                    } else {
+//                        LogUtil.e("扇区" + sectorIndex + "没有找到密码");
+//                    }
 
-                    LogUtil.e("扇区" + sectorIndex);
 
                     if (isAuth) {
                         bCount = mTag.getBlockCountInSector(j);
                         bIndex = mTag.sectorToBlock(j);
                         for (int i = 0; i < bCount; i++) {
 
-//                            byte[] data = mTag.readBlock(bIndex);
-//                            String dataString = bytesToHexString(data);
-//                            Log.e(bIndex+"第" + i + "数据:", dataString);//convertHexToString(dataString));
-//                            //metaInfo.add(bytesToHexString(data));
-
-                            bIndex++;
                             int pos = 4 * sectorIndex + blockIndex;
                             if (pos == bIndex) {
                                 byte[] data2 = mTag.readBlock(pos);
                                 String dataString2 = StringCharByteUtil.bytesToHexString2(data2);
-                                Log.e("扇区" + sectorIndex+"位置：" + bIndex + "数据:", dataString2);
+                                Log.e("扇区：" + sectorIndex + "---位置：" + bIndex + "数据:", dataString2);
                                 dataString2 = clearZero(dataString2);
                                 return dataString2;
                             }
 
-
+                            bIndex++;
                         }
                     } else {
                         return "";

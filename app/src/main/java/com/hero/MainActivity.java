@@ -103,22 +103,15 @@ public class MainActivity extends BaseActivty {
         listToMapList();
 
 
-        String text="123456779";
+        String text = "123456779";
         StringCharByteUtil.strToHexStr(text);
 
+        //人为崩溃
+        List<String> list = new ArrayList<>();
+        //LogUtil.e("list" + list.get(2));
     }
 
 
-    public static byte[] int2ByteArray(int i) {
-        byte[] result = new byte[4];
-        result[0] = (byte) ((i >> 24) & 0xFF);
-        result[1] = (byte) ((i >> 16) & 0xFF);
-        result[2] = (byte) ((i >> 8) & 0xFF);
-        result[3] = (byte) (i & 0xFF);
-
-        LogUtil.e("==result.length=" + result.length);
-        return result;
-    }
 
 
     //相同的list 按照相同的字段 进行再分组
