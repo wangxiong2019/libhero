@@ -89,7 +89,6 @@ public class NfcAc extends BaseActivty {
     private void NTAG(Intent intent) {
 
 
-
         //NTAG213 读写
         int page = 4;
         String text = "1234567";//什么读写啊
@@ -107,7 +106,7 @@ public class NfcAc extends BaseActivty {
                 num = num + 1;
             }
             LogUtil.e("num=" + num);
-            tv_04.setText(nfcUtil.readNTAG213(intent, num));
+            tv_04.setText(nfcUtil.readNTAG213(intent));
         }
 
     }
@@ -129,21 +128,11 @@ public class NfcAc extends BaseActivty {
 
     private boolean writeM1Block(Intent intent) {
 
-        int text = 32345677;
-        String text2 = StringCharByteUtil.numToHex(text);
-        String text3 = "00";
-        byte[] bb = StringCharByteUtil.hexToByteArray(text2);
-        StringCharByteUtil.bytesToHexString(bb);
-        String text4 = "";
-        if (bb.length < 16) {
-            int num = 16 - bb.length;
-            for (int i = 0; i < num; i++) {
-                text4 = text4 + text3;
-            }
-        }
-        LogUtil.e("text4=" + text4);
-        bb = StringCharByteUtil.hexToByteArray(text4 + text2);
-        StringCharByteUtil.bytesToHexString(bb);
+//        int text = 32345677;
+//        String text2 = StringCharByteUtil.numToHex(text);
+
+        String text = "32345677";
+
 
         int sectorIndex = 6;//第几个扇区
         int blockIndex = 1;//第几个扇区中的第几块
@@ -152,7 +141,7 @@ public class NfcAc extends BaseActivty {
         int pos = 4 * sectorIndex + blockIndex;
 
         try {
-            if (nfcUtil.writeM1Block(intent, pos, bb)) {
+            if (nfcUtil.writeM1Block(intent, pos, text)) {
                 tv_02.setText("" + "写入成功");
                 return true;
             } else {

@@ -24,7 +24,6 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.view.XToast;
@@ -339,9 +338,9 @@ public class NfcUtil {
      * 改写数据
      *
      * @param block
-     * @param blockbyte
+     * @param text
      */
-    public boolean writeM1Block(Intent intent, int block, byte[] blockbyte) throws IOException {
+    public boolean writeM1Block(Intent intent, int block, String text) throws IOException {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
         if (isMifareClassic(tag) == false) {
@@ -356,11 +355,28 @@ public class NfcUtil {
             }
 
             if (isAuth) {
+                String text2 = StringCharByteUtil.strToHexStr(text);
+                String text3 = "00";
+                byte[] blockbyte = StringCharByteUtil.hexToByteArray(text2);
+                StringCharByteUtil.bytesToHexString(blockbyte);
+
+                String text4 = "";
+                if (blockbyte.length < 16) {//字节数组 一定要16位  如果不足16位 要用00占一位补齐
+                    int num = 16 - blockbyte.length;
+                    for (int i = 0; i < num; i++) {
+                        text4 = text4 + text3;
+                    }
+                }
+                LogUtil.e("text4=" + text4);
+                blockbyte = StringCharByteUtil.hexToByteArray(text4 + text2);
+
+                // StringCharByteUtil.bytesToHexString(blockbyte);
+
                 mTag.writeBlock(block, blockbyte);
-                Toast.makeText(mActivity, "写入成功", Toast.LENGTH_SHORT).show();
+                LogUtil.e("writeBlock：写入成功");
                 return true;
             } else {
-                Log.e("writeBlock", "写入失败");
+                LogUtil.e("writeBlock：写入失败");
 
                 return false;
             }
@@ -589,7 +605,7 @@ public class NfcUtil {
         }
     }
 
-    public String readNTAG213(Intent intent, int page) {
+    public String readNTAG213(Intent intent) {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         if (!isMifareUltralight(tag)) {
             return "";
@@ -599,24 +615,28 @@ public class NfcUtil {
             mTag.connect();
 
 
-            int num = page / 4;
-            if (page % 4 > 0) {
-                num = num + 1;
-            }
+//            int num = page / 4;
+//            if (page % 4 > 0) {
+//                num = num + 1;
+//            }
             String str = "";
-            for (int i = 0; i < num; i++) {
+            int num = 39;
+            for (int i = 4; i < num; i++) {
                 //表示从第四页开始  读几页
-                byte[] data = mTag.readPages(4 * i + 4);
-                LogUtil.e("length=" + data.length + "--->bytes=" + StringCharByteUtil.bytesToHexString(data));
+                byte[] data = mTag.readPages(i);
+                String aa = StringCharByteUtil.bytesToHexString(data);
+                String bb = "00000000";//如果全是0  说明 后面没有数据
+
                 String str2 = new String(data, Charset.forName("GB2312"));
-                //str = clearZero(str);
-                LogUtil.e("readNTAG213=" + str2.trim());
+                LogUtil.e(aa.trim()+"readNTAG213=" + str2.trim());
+
+                if (aa.trim().equals(bb)) {
+                    break;
+                }
+
 
                 str = str + str2.trim();
-
             }
-
-
             mTag.close();
             return str;
         } catch (IOException e) {
