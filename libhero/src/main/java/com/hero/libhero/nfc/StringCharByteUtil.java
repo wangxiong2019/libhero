@@ -92,12 +92,12 @@ public class StringCharByteUtil {
     public static String strToUnicode(String string) {
         StringBuffer unicode = new StringBuffer();
         for (int i = 0; i < string.length(); i++) {
-// 取出每一个字符
+            // 取出每一个字符
             char c = string.charAt(i);
             // 转换为unicode
             unicode.append("\\u" + Integer.toHexString(c));
         }
-        LogUtil.e("hs=" + unicode.toString());
+        LogUtil.e("strToUnicode=" + unicode.toString());
         return unicode.toString();
     }
 
@@ -113,7 +113,7 @@ public class StringCharByteUtil {
             // 追加成string
             string.append((char) data);
         }
-        LogUtil.e("hs=" + string.toString());
+        LogUtil.e("unicodeToStr=" + string.toString());
         return string.toString();
     }
 
@@ -134,7 +134,7 @@ public class StringCharByteUtil {
             n += str.indexOf(hexs[2 * i + 1]);
             bytes[i] = (byte) (n & 0xff);
         }
-        LogUtil.e("hs=" + new String(bytes));
+        LogUtil.e("hexStrToStr=" + new String(bytes));
         return new String(bytes);
     }
 

@@ -314,11 +314,12 @@ public class NfcUtil {
      * 每个扇区前3块存数据，最后一块一般存密码。
      * 监测是否支持MifareClassic
      *
-     * @param tag
+     * @param intent
      * @param
      * @return
      */
-    public boolean isMifareClassic(Tag tag) {
+    public boolean isMifareClassic(Intent intent) {
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         String[] techList = tag.getTechList();
         boolean haveMifareUltralight = false;
         for (String tech : techList) {
@@ -343,7 +344,7 @@ public class NfcUtil {
     public boolean writeM1Block(Intent intent, int block, String text) throws IOException {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-        if (isMifareClassic(tag) == false) {
+        if (isMifareClassic(intent) == false) {
             return false;
         }
         MifareClassic mTag = MifareClassic.get(tag);
@@ -356,10 +357,10 @@ public class NfcUtil {
 
             if (isAuth) {
                 String text2 = StringCharByteUtil.strToHexStr(text);
-                String text3 = "00";
                 byte[] blockbyte = StringCharByteUtil.hexToByteArray(text2);
-                StringCharByteUtil.bytesToHexString(blockbyte);
+                //StringCharByteUtil.bytesToHexString(blockbyte);
 
+                String text3 = "00";
                 String text4 = "";
                 if (blockbyte.length < 16) {//字节数组 一定要16位  如果不足16位 要用00占一位补齐
                     int num = 16 - blockbyte.length;
@@ -368,11 +369,12 @@ public class NfcUtil {
                     }
                 }
                 LogUtil.e("text4=" + text4);
-                blockbyte = StringCharByteUtil.hexToByteArray(text4 + text2);
+                String last_test=text4 + text2;
+             byte[]   last_bytes = StringCharByteUtil.hexToByteArray(last_test);
 
-                // StringCharByteUtil.bytesToHexString(blockbyte);
+                // StringCharByteUtil.bytesToHexString(last_bytes);
 
-                mTag.writeBlock(block, blockbyte);
+                mTag.writeBlock(block, last_bytes);
                 LogUtil.e("writeBlock：写入成功");
                 return true;
             } else {
@@ -397,10 +399,11 @@ public class NfcUtil {
      * 读取M1卡片  某一扇区 某一块信息
      */
     public String readM1Block(Intent intent, int sectorIndex, int blockIndex) throws IOException {
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        if (isMifareClassic(tag) == false) {
+
+        if (isMifareClassic(intent) == false) {
             return "不支持MifareClassic";
         }
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         MifareClassic mTag = MifareClassic.get(tag);
         mTag.connect();
         // 读取TAG
@@ -423,10 +426,13 @@ public class NfcUtil {
                             int pos = 4 * sectorIndex + blockIndex;
                             if (pos == bIndex) {
                                 byte[] data2 = mTag.readBlock(pos);
-                                String dataString2 = StringCharByteUtil.bytesToHexString2(data2);
-                                Log.e("扇区：" + sectorIndex + "---位置：" + bIndex + "数据:", dataString2);
-                                dataString2 = clearZero(dataString2);
-                                return dataString2;
+                                //字节转十六进制
+                                String hexStr = StringCharByteUtil.bytesToHexString2(data2);
+                                Log.e("扇区：" + sectorIndex + "---位置：" + bIndex + "数据:", hexStr);
+                                //hexStr = clearZero(hexStr);
+                                //十六进制转字符串
+                                hexStr = StringCharByteUtil.hexToStr(hexStr);
+                                return hexStr;
                             }
 
                             bIndex++;
@@ -485,7 +491,8 @@ public class NfcUtil {
     /////////////////读取NTAG213/////////////////////////
 
 
-    public boolean isMifareUltralight(Tag tag) {
+    public boolean isMifareUltralight(Intent intent) {
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         String[] techList = tag.getTechList();
         boolean haveMifareUltralight = false;
         for (String tech : techList) {
@@ -501,54 +508,66 @@ public class NfcUtil {
         return true;
     }
 
+    int min_page = 4;
+    int max_page = 39;
 
-    public boolean writeNTAG213(Intent intent, int page, String text) {
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        if (page < 4) {
-            XToast.error(mActivity, "page不能小于4").show();
+    public boolean writeStrNTAG213(Intent intent, int page, String text) {
+
+
+        if (page < min_page) {
+            XToast.error(mActivity, "page不能小于" + min_page).show();
             return false;
         }
-        if (page > 47) {
-            XToast.error(mActivity, "page不能大于47").show();
+        if (page > max_page) {
+            XToast.error(mActivity, "page不能大于" + max_page).show();
             return false;
         }
-        if (!isMifareUltralight(tag)) {
+
+        if (!isMifareUltralight(intent)) {
             return false;
         }
         try {
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             MifareUltralight mTag = MifareUltralight.get(tag);
             mTag.connect();
-            byte[] bytes = text.getBytes(Charset.forName("GB2312"));
+
+            String text2 = StringCharByteUtil.strToHexStr(text);
+            byte[] bytes = StringCharByteUtil.hexToByteArray(text2);
+            StringCharByteUtil.bytesToHexString(bytes);
+
             int len = bytes.length;
-            //一个 page  只能写入4个字节（相当于两个汉字）
+            //一个 page  只能写入4个字节（相当于GB2312格式 两个汉字）
             int yu = len % 4;//取余
             LogUtil.e("取余=" + yu);
-            LogUtil.e("bytes=" + StringCharByteUtil.bytesToHexString(bytes));
 
-            String text2 = "";
-            String text3 = " ";
+            String text3 = "00";
+            String text4 = "";
+
             for (int i = 0; i < yu; i++) {
-                text2 = text2 + text3;//不足4个字节 补齐
+                text4 = text4 + text3;//不足4个字节 空字符补齐
             }
-            text = text + text2 + "";
-            byte[] bytes_last = text.getBytes(Charset.forName("GB2312"));
+            LogUtil.e("text4=" + text4);
+            String last_text = text4 + text2 ;
+            LogUtil.e("last_text=" + last_text);
+            byte[] last_bytes = StringCharByteUtil.hexToByteArray(last_text);
 
-            int num = bytes_last.length / 4;
-            LogUtil.e("num=" + num + "--->bytes=" + StringCharByteUtil.bytesToHexString(bytes_last));
-
+            int num = last_bytes.length / 4;
             LogUtil.e("num=" + num);
+
             for (int i = 0; i < num; i++) {
                 int start = i * 4;
-                byte[] bytes2 = SubArray(bytes_last, start, 4);
+                byte[] bytes2 = SubArray(last_bytes, start, 4);
                 mTag.writePage(page + i, bytes2);
             }
             mTag.close();
+            LogUtil.e("写入成功:" + text);
             return true;
         } catch (IOException e) {
             return false;
         }
 
     }
+
 
     /**
      * 字节数组拆分
@@ -571,11 +590,12 @@ public class NfcUtil {
 
     //清除4至39页
     public boolean clearNTAG4to39(Intent intent) {
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        if (!isMifareUltralight(tag)) {
+
+        if (!isMifareUltralight(intent)) {
             return false;
         }
         try {
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             MifareUltralight mTag = MifareUltralight.get(tag);
             mTag.connect();
 
@@ -594,7 +614,7 @@ public class NfcUtil {
             LogUtil.e("text4=" + text4);
             bb = StringCharByteUtil.hexToByteArray(text4 + text2);
 
-            for (int i = 4; i < 38; i++) {
+            for (int i = min_page; i < max_page; i++) {
                 mTag.writePage(i, bb);
             }
             mTag.close();
@@ -606,37 +626,38 @@ public class NfcUtil {
     }
 
     public String readNTAG213(Intent intent) {
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        if (!isMifareUltralight(tag)) {
+
+        if (!isMifareUltralight(intent)) {
             return "";
         }
         try {
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             MifareUltralight mTag = MifareUltralight.get(tag);
             mTag.connect();
 
-
-//            int num = page / 4;
-//            if (page % 4 > 0) {
-//                num = num + 1;
-//            }
             String str = "";
-            int num = 39;
-            for (int i = 4; i < num; i++) {
-                //表示从第四页开始  读几页
-                byte[] data = mTag.readPages(i);
-                String aa = StringCharByteUtil.bytesToHexString(data);
-                String bb = "00000000";//如果全是0  说明 后面没有数据
 
-                String str2 = new String(data, Charset.forName("GB2312"));
-                LogUtil.e(aa.trim()+"readNTAG213=" + str2.trim());
+//            for (int i = min_page; i < max_page; i++) {
+//                //表示从第四页开始  读几页
+//                byte[] data = mTag.readPages(i);
+//                String aa = StringCharByteUtil.bytesToHexString(data).trim();
+//                String bb = "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00";//如果全是0  说明 后面没有数据
+//
+//
+//                if (aa.equals(bb)) {
+//                    break;
+//                }
+//                LogUtil.e("i=" + i + "-->" + aa + "--->data.length=" + data.length);
+//                str = str + aa;
+//            }
 
-                if (aa.trim().equals(bb)) {
-                    break;
-                }
+            byte[] data = mTag.readPages(min_page);
+
+            str = StringCharByteUtil.bytesToHexString(data);
+            str=StringCharByteUtil.hexToStr(str);
+            LogUtil.e("最后的readNTAG213=" + str);
 
 
-                str = str + str2.trim();
-            }
             mTag.close();
             return str;
         } catch (IOException e) {

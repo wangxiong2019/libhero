@@ -107,15 +107,15 @@ public class MainActivity extends BaseActivty {
         listToMapList();
 
 
-        String text = "123456779";
-        StringCharByteUtil.strToHexStr(text);
-
-        //人为崩溃
-        List<String> list = new ArrayList<>();
-        //LogUtil.e("list" + list.get(2));
-
-        String aa = StringCharByteUtil.strToHexStr("你好");
-        tv_change.setText("你好-->hex:"+aa + "");
+//        String text = "123456779";
+//        StringCharByteUtil.strToHexStr(text);
+//
+//        //人为崩溃
+//        List<String> list = new ArrayList<>();
+//        //LogUtil.e("list" + list.get(2));
+//
+//        String aa = StringCharByteUtil.strToHexStr("你好");
+//        tv_change.setText("你好-->hex:"+aa + "");
 
 
     }

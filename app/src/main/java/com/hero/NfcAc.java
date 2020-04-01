@@ -3,12 +3,9 @@ package com.hero;
 import android.content.Intent;
 import android.widget.TextView;
 
-import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.nfc.NfcUtil;
-import com.hero.libhero.nfc.StringCharByteUtil;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 import butterknife.BindView;
 
@@ -63,27 +60,24 @@ public class NfcAc extends BaseActivty {
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        try {
-            String id = nfcUtil.readNFCId(intent);
-            tv_01.setText("id=" + id);
 
+        String id = nfcUtil.readNFCId(intent);
+        tv_01.setText("id=" + id);
+
+        if (nfcUtil.isMifareClassic(intent)) {
             readTag(intent);
 
             boolean isTrue = writeM1Block(intent);
             if (isTrue == true) {
                 readM1Block(intent);
             }
+        } else if (nfcUtil.isMifareUltralight(intent)) {
 
-            //nfcUtil.clearNTAG4to39(intent);
+            if (nfcUtil.clearNTAG4to39(intent)) {
+                NTAG(intent);
+            }
 
-            NTAG(intent);
-
-
-        } catch (NullPointerException e) {
-            LogUtil.e("NullPointerException=" + e.getMessage());
         }
-
-        //readM1Block(intent);
     }
 
     private void NTAG(Intent intent) {
@@ -91,21 +85,11 @@ public class NfcAc extends BaseActivty {
 
         //NTAG213 读写
         int page = 4;
-        String text = "1234567";//什么读写啊
+        String text = "A123456779";//什么读写啊
         //c4e3bac3
-        boolean isWriteNTAG = nfcUtil.writeNTAG213(intent, page, text);
+        boolean isWriteNTAG = nfcUtil.writeStrNTAG213(intent, page, text);
 
         if (isWriteNTAG == true) {
-
-            byte[] bytes = text.getBytes(Charset.forName("GB2312"));
-            int len = bytes.length;
-            //一个 page  只能写入4个字节（相当于GB2312格式两个汉字）
-            int yu = len % 4;//取余
-            int num = len / 4;
-            if (yu > 0) {
-                num = num + 1;
-            }
-            LogUtil.e("num=" + num);
             tv_04.setText(nfcUtil.readNTAG213(intent));
         }
 
@@ -131,7 +115,7 @@ public class NfcAc extends BaseActivty {
 //        int text = 32345677;
 //        String text2 = StringCharByteUtil.numToHex(text);
 
-        String text = "32345677";
+        String text = "A123456779";
 
 
         int sectorIndex = 6;//第几个扇区
@@ -142,7 +126,7 @@ public class NfcAc extends BaseActivty {
 
         try {
             if (nfcUtil.writeM1Block(intent, pos, text)) {
-                tv_02.setText("" + "写入成功");
+                tv_02.setText("" + "写入成功:" + text);
                 return true;
             } else {
                 tv_02.setText("" + "写入失败");
