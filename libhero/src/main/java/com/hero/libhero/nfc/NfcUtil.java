@@ -329,7 +329,7 @@ public class NfcUtil {
             }
         }
         if (!haveMifareUltralight) {
-            XToast.error(mActivity, "不支持MifareClassic").show();
+            //XToast.error(mActivity, "不支持MifareClassic").show();
             return false;
         }
         return true;
@@ -369,8 +369,8 @@ public class NfcUtil {
                     }
                 }
                 LogUtil.e("text4=" + text4);
-                String last_test=text4 + text2;
-             byte[]   last_bytes = StringCharByteUtil.hexToByteArray(last_test);
+                String last_test = text4 + text2;
+                byte[] last_bytes = StringCharByteUtil.hexToByteArray(last_test);
 
                 // StringCharByteUtil.bytesToHexString(last_bytes);
 
@@ -401,7 +401,7 @@ public class NfcUtil {
     public String readM1Block(Intent intent, int sectorIndex, int blockIndex) throws IOException {
 
         if (isMifareClassic(intent) == false) {
-            return "不支持MifareClassic";
+            return "";
         }
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         MifareClassic mTag = MifareClassic.get(tag);
@@ -427,11 +427,12 @@ public class NfcUtil {
                             if (pos == bIndex) {
                                 byte[] data2 = mTag.readBlock(pos);
                                 //字节转十六进制
-                                String hexStr = StringCharByteUtil.bytesToHexString2(data2);
-                                Log.e("扇区：" + sectorIndex + "---位置：" + bIndex + "数据:", hexStr);
-                                //hexStr = clearZero(hexStr);
+                                String hexStr = StringCharByteUtil.bytesToHexString(data2);
+                                hexStr=hexStr.replaceAll("00 ","");
                                 //十六进制转字符串
                                 hexStr = StringCharByteUtil.hexToStr(hexStr);
+                                Log.e("扇区：" + sectorIndex + "---位置：" + bIndex + "数据:", hexStr);
+
                                 return hexStr;
                             }
 
@@ -502,7 +503,6 @@ public class NfcUtil {
             }
         }
         if (!haveMifareUltralight) {
-            XToast.error(mActivity, "不支持MifareUltralight").show();
             return false;
         }
         return true;
@@ -547,7 +547,7 @@ public class NfcUtil {
                 text4 = text4 + text3;//不足4个字节 空字符补齐
             }
             LogUtil.e("text4=" + text4);
-            String last_text = text4 + text2 ;
+            String last_text = text4 + text2;
             LogUtil.e("last_text=" + last_text);
             byte[] last_bytes = StringCharByteUtil.hexToByteArray(last_text);
 
@@ -635,31 +635,17 @@ public class NfcUtil {
             MifareUltralight mTag = MifareUltralight.get(tag);
             mTag.connect();
 
-            String str = "";
-
-//            for (int i = min_page; i < max_page; i++) {
-//                //表示从第四页开始  读几页
-//                byte[] data = mTag.readPages(i);
-//                String aa = StringCharByteUtil.bytesToHexString(data).trim();
-//                String bb = "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00";//如果全是0  说明 后面没有数据
-//
-//
-//                if (aa.equals(bb)) {
-//                    break;
-//                }
-//                LogUtil.e("i=" + i + "-->" + aa + "--->data.length=" + data.length);
-//                str = str + aa;
-//            }
 
             byte[] data = mTag.readPages(min_page);
 
-            str = StringCharByteUtil.bytesToHexString(data);
-            str=StringCharByteUtil.hexToStr(str);
-            LogUtil.e("最后的readNTAG213=" + str);
+            String hexStr = StringCharByteUtil.bytesToHexString(data);// StringCharByteUtil.bytesToHexString2(data);
+            hexStr=hexStr.replaceAll("00 ","");
+            hexStr = StringCharByteUtil.hexToStr(hexStr);
+            LogUtil.e("最后的readNTAG213=" + hexStr);
 
 
             mTag.close();
-            return str;
+            return hexStr.trim();
         } catch (IOException e) {
             return "";
         }

@@ -101,13 +101,13 @@ public class NfcAc extends BaseActivty {
     }
 
     private void readM1Block(Intent intent) {
-        String str = null;
         try {
-            str = nfcUtil.readM1Block(intent, sectorIndex, blockIndex);
+            String str = nfcUtil.readM1Block(intent, sectorIndex, blockIndex);
+            tv_03.setText(sectorIndex + "扇区,第" + (blockIndex + 1) + "块数据：\n" + str);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        tv_03.setText(sectorIndex + "扇区,第" + (blockIndex + 1) + "块数据：\n" + str);
+
     }
 
     private boolean writeM1Block(Intent intent) {
@@ -115,7 +115,7 @@ public class NfcAc extends BaseActivty {
 //        int text = 32345677;
 //        String text2 = StringCharByteUtil.numToHex(text);
 
-        String text = "A123456779";
+        String text = "123456779";
 
 
         int sectorIndex = 6;//第几个扇区
