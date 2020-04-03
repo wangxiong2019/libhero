@@ -112,10 +112,8 @@ public class NfcAc extends BaseActivty {
 
     private boolean writeM1Block(Intent intent) {
 
-//        int text = 32345677;
-//        String text2 = StringCharByteUtil.numToHex(text);
 
-        String text = "123456779";
+        String text = "0010194CLPKZX";
 
 
         int sectorIndex = 6;//第几个扇区

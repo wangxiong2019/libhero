@@ -22,11 +22,10 @@ public class MyApp extends Application {
 
         LibHeroInitializer.init(this, true);
 
-        //保活服务
-        pullAliveService();
-
-
         initCrash();
+
+        //保活服务
+        //pullAliveService();
     }
 
 

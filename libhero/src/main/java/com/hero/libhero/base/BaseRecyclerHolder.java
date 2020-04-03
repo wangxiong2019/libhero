@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class BaseRecyclerHolder extends RecyclerView.ViewHolder {
-    private View itemView;
+    public View itemView;
     private SparseArray<View> viewSparseArray;
 
     public BaseRecyclerHolder(View itemView) {//Context context,
