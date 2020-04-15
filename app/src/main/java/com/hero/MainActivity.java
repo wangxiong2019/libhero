@@ -15,6 +15,7 @@ import com.hero.libhero.okhttp.OkHttpUtil;
 import com.hero.libhero.okhttp.https.MyCallBack;
 import com.hero.libhero.permissions.PermissionListener;
 import com.hero.libhero.permissions.PermissionsUtil;
+import com.hero.libhero.utils.ActivityUtil;
 import com.hero.libhero.utils.GlideUtil;
 import com.hero.libhero.utils.JsonUtil;
 import com.hero.libhero.utils.StatusBarUtils;
@@ -37,6 +38,8 @@ import java.util.Set;
 import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends BaseActivty {
 
@@ -101,7 +104,6 @@ public class MainActivity extends BaseActivty {
 
         ftvInit();
 
-        file();
 
         listToMapList();
 
@@ -116,6 +118,19 @@ public class MainActivity extends BaseActivty {
 //        String aa = StringCharByteUtil.strToHexStr("你好");
 //        tv_change.setText("你好-->hex:"+aa + "");
 
+
+        PermissionsUtil.requestPermission(mActivity, new PermissionListener() {
+            @Override
+            public void permissionGranted(@NonNull String[] permission) {
+                ActivityUtil.IsHasSD();
+
+            }
+
+            @Override
+            public void permissionDenied(@NonNull String[] permission) {
+
+            }
+        }, needPermissions);
 
     }
 
@@ -166,19 +181,7 @@ public class MainActivity extends BaseActivty {
     }
 
 
-    private void file() {
-        PermissionsUtil.requestPermission(mContext, new PermissionListener() {
-            @Override
-            public void permissionGranted(@NonNull String[] permission) {
 
-            }
-
-            @Override
-            public void permissionDenied(@NonNull String[] permission) {
-
-            }
-        }, needPermissions);
-    }
 
     //文字切换
     private void ftvInit() {

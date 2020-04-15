@@ -24,6 +24,8 @@
                 android:resource="@xml/__picker_provider_paths"/>
         </provider>
 
+        <activity android:name=".permissions.PermissionActivity"/>
+
         <!--第三方 图片选择-->
         <activity
             android:name=".photopicker.PhotoPickerActivity"
