@@ -24,7 +24,8 @@
                 android:resource="@xml/__picker_provider_paths"/>
         </provider>
 
-        <activity android:name=".permissions.PermissionActivity"/>
+        <activity android:name=".permissions.PermissionActivity"
+            android:theme="@style/GrantorNoDisplay"/>
 
         <!--第三方 图片选择-->
         <activity

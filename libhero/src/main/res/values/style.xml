@@ -1,6 +1,12 @@
 <resources>
 
-
+    <!-- 权限 -->
+    <style name="GrantorNoDisplay" parent="Theme.AppCompat.Light.NoActionBar">>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+    <!-- 边距为0 -->
     <style name="common_dialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:windowNoTitle">true</item>
@@ -10,6 +16,7 @@
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="actionBarSize">48dp</item>
     </style>
+
     <style name="PhotoPickerTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="actionBarTheme">@style/actionBarTheme</item>
         <item name="colorPrimary">#299EE3</item>
@@ -41,6 +48,7 @@
         <!-- 遮罩层 -->
         <item name="android:backgroundDimAmount">0.5</item>
     </style>
+
     <style name="Dialog1" parent="@android:style/Theme.Holo.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowFrame">@null</item>
