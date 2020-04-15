@@ -104,7 +104,14 @@ android {
 //    countNotTranslucentSingleInstance = 2
 //}
 
-
+allprojects {
+    repositories {
+        flatDir {
+            dirs 'libs'//解析***.arr文件
+        }
+        maven { url "https://jitpack.io" }
+    }
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -116,11 +123,7 @@ dependencies {
 
     implementation 'com.android.support:design:29.0.0'
 
-
-
     implementation project(':libhero')
-    //权限
-    implementation 'com.github.dfqin:grantor:2.5'
 
     //事件分发、页面之间传值
     implementation 'org.greenrobot:eventbus:3.1.1'

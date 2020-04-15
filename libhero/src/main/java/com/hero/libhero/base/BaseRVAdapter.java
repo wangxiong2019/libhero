@@ -1,6 +1,7 @@
 package com.hero.libhero.base;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public abstract class BaseRVAdapter<T> extends RecyclerView.Adapter<BaseRecyclerHolder> {
     public Activity mActivity;
+    public Intent intent;
     public List<T> list = new ArrayList<>();
     public String TAG = getClass().getSimpleName();
 

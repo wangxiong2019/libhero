@@ -1,4 +1,4 @@
-package com.hero.libhero.view;
+package com.hero.libhero.imageview.preview.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

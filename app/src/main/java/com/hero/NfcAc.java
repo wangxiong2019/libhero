@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.widget.TextView;
 
 import com.hero.libhero.nfc.NfcUtil;
+import com.hero.libhero.view.XToast;
 
 import java.io.IOException;
 
@@ -80,17 +81,37 @@ public class NfcAc extends BaseActivty {
         }
     }
 
+    String[] strs = {
+            "POEW4C", "5O6JVN", "IODWDJ", "KONCQX",
+            "3O4lEA", "MO6TVl", "FO9SVW", "ROHIZY",
+            "4OR57W", "VOHU52", "YODZ5A", "lOYHEA",
+            "TOGURS", "NO3EJI", "6OUBI7", "BONFNN",
+            "GO7X7G", "HOARD9", "WQO986", "WWOTXX",
+            "WEO5XQ", "W8ONCC", "WAO3IH", "WSO9CG",
+            "W2O3HR", "WDOT6E", "WZOCAS", "WXOMAN",
+            "W9OUH9", "WCO3NW", "W7OD4W", "WPOHCH",
+            "W5O8PF", "WIOHDl", "WKOM6F", "W3OKGF",
+            "WMOG7P", "WJOlDM", "WUOTNE", "WFOXQ6"
+
+
+    };
+    int num = 0;
+
     private void NTAG(Intent intent) {
 
 
         //NTAG213 读写
         int page = 4;
-        String text = "A123456779";//什么读写啊
-        //c4e3bac3
+        String text = "ROHIZY";//strs[num];
         boolean isWriteNTAG = nfcUtil.writeStrNTAG213(intent, page, text);
 
         if (isWriteNTAG == true) {
             tv_04.setText(nfcUtil.readNTAG213(intent));
+            XToast.success(mContext, "num=" + num).show();
+            if (num < strs.length - 1) {
+                num++;
+            }
+
         }
 
     }
@@ -113,8 +134,8 @@ public class NfcAc extends BaseActivty {
     private boolean writeM1Block(Intent intent) {
 
 
-        String text = "0010194CLPKZX";
-
+        //String text = "0010194CLPKZX";//00101ZXGBCQJ3
+        String text = "00101ZXGBCQJ3";
 
         int sectorIndex = 6;//第几个扇区
         int blockIndex = 1;//第几个扇区中的第几块

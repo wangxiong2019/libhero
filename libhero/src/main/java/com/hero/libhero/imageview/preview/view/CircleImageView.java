@@ -1,4 +1,4 @@
-package com.hero.libhero.view;
+package com.hero.libhero.imageview.preview.view;
 
 
 import android.annotation.SuppressLint;

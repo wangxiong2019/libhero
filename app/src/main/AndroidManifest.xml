@@ -34,7 +34,7 @@
         <activity android:name=".EventBusAc" />
         <activity android:name=".DownloadAc" />
         <activity android:name=".UploadAc" />
-
+        <activity android:name=".SelectImgAc" />
 
 
 
@@ -42,11 +42,11 @@
             android:name=".NfcAc"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.nfc.action.NDEF_DISCOVERED" />-->
-<!--            </intent-filter>-->
-<!--            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"-->
-<!--                android:resource="@xml/nfc_tech_filter" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.nfc.action.NDEF_DISCOVERED" />-->
+            <!--            </intent-filter>-->
+            <!--            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"-->
+            <!--                android:resource="@xml/nfc_tech_filter" />-->
         </activity>
 
     </application>

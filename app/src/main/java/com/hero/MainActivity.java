@@ -8,14 +8,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.github.dfqin.grantor.PermissionListener;
-import com.github.dfqin.grantor.PermissionsUtil;
 import com.hero.adapter.AppleBean;
 import com.hero.libhero.mydb.DbUtil;
 import com.hero.libhero.mydb.LogUtil;
-import com.hero.libhero.nfc.StringCharByteUtil;
 import com.hero.libhero.okhttp.OkHttpUtil;
 import com.hero.libhero.okhttp.https.MyCallBack;
+import com.hero.libhero.permissions.PermissionListener;
+import com.hero.libhero.permissions.PermissionsUtil;
 import com.hero.libhero.utils.GlideUtil;
 import com.hero.libhero.utils.JsonUtil;
 import com.hero.libhero.utils.StatusBarUtils;
@@ -168,7 +167,7 @@ public class MainActivity extends BaseActivty {
 
 
     private void file() {
-        PermissionsUtil.requestPermission(MainActivity.this, new PermissionListener() {
+        PermissionsUtil.requestPermission(mContext, new PermissionListener() {
             @Override
             public void permissionGranted(@NonNull String[] permission) {
 
@@ -205,7 +204,7 @@ public class MainActivity extends BaseActivty {
     //Butterknife 自动生成的
     @OnClick({R.id.tv_res, R.id.tv_res2,
             R.id.tv_res3, R.id.tv_todownload,
-            R.id.tv_toupload})
+            R.id.tv_toupload,R.id.tv_change})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_res:
@@ -226,6 +225,10 @@ public class MainActivity extends BaseActivty {
             case R.id.tv_res3:
                 intent = new Intent(mContext, NfcAc.class);
                 intent.putExtra("text", "温州浩兴科技有限公司");
+                startActivity(intent);
+                break;
+            case R.id.tv_change:
+                intent = new Intent(mContext, SelectImgAc.class);
                 startActivity(intent);
                 break;
         }

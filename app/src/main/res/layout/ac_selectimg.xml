@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gv_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="200dp" />
+
+    <TextView
+        android:id="@+id/tv_upload"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/toast_warning_color"
+        android:gravity="center"
+        android:text="选择图片"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+</LinearLayout>

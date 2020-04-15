@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="BezierBannerView">
+        <attr name="bbv_selectedColor" format="color" />
+        <attr name="bbv_unSelectedColor" format="color" />
+        <attr name="bbv_selectedRadius" format="dimension" />
+        <attr name="bbv_unSelectedRadius" format="dimension" />
+        <attr name="bbv_spacing" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="NineGridImageView">
+        <!--单张图片的尺寸-->
+        <attr name="ngiv_singleImgSize" format="dimension" />
+        <!--图片的间隙，默认是0-->
+        <attr name="ngiv_imgGap" format="dimension" />
+        <!--最大的图片数，默认是9-->
+        <attr name="ngiv_maxSize" format="integer" />
+        <!--展示样式， 默认是grid-->
+        <attr name="ngiv_showStyle" format="enum">
+            <enum name="grid" value="0" />
+            <enum name="fill" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <!--IconImageView-->
+    <declare-styleable name="IconImageView">
+        <!--图标的资源-->
+        <attr name="iiv_icon" format="reference" />
+        <!--图标缩放的比例, 默认是0.5-->
+        <attr name="iiv_icon_scale" format="float" />
+        <!--图标是否显示, 默认是true-->
+        <attr name="iiv_is_show" format="boolean" />
+    </declare-styleable>
+
+
+
     <!-- 正则表达式编辑框 -->
     <declare-styleable name="RegexEditText">
         <!-- 正则输入限制 -->
