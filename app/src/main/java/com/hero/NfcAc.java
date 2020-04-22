@@ -42,7 +42,6 @@ public class NfcAc extends BaseActivty {
             tv_01.setText("不支持nfc功能");
         }
 
-
     }
 
     /**
@@ -72,6 +71,9 @@ public class NfcAc extends BaseActivty {
             if (isTrue == true) {
                 readM1Block(intent);
             }
+
+            //readM1Block(intent);
+
         } else if (nfcUtil.isMifareUltralight(intent)) {
 
             if (nfcUtil.clearNTAG4to39(intent)) {
@@ -102,7 +104,7 @@ public class NfcAc extends BaseActivty {
 
         //NTAG213 读写
         int page = 4;
-        String text = "ROHIZY";//strs[num];
+        String text = "WFOXQ6";//strs[num];
         boolean isWriteNTAG = nfcUtil.writeStrNTAG213(intent, page, text);
 
         if (isWriteNTAG == true) {
@@ -131,11 +133,17 @@ public class NfcAc extends BaseActivty {
 
     }
 
+    String[] stu = {
+            "00101V0HTDETS", "00101IF1D7UVB", "00101DQXK8RXR", "00101BBZYYXOB",
+            "00101TFCD1MGW", "001017MOHCAWP", "00101KE4CIYFY", "00101PG1WX85Y",
+            "00101JMGOIBVT",};
+    int num2 = 0;
+
     private boolean writeM1Block(Intent intent) {
 
 
         //String text = "0010194CLPKZX";//00101ZXGBCQJ3
-        String text = "00101ZXGBCQJ3";
+        String text = "00101ZXGBCQJ3";//stu[num2];
 
         int sectorIndex = 6;//第几个扇区
         int blockIndex = 1;//第几个扇区中的第几块
@@ -146,6 +154,7 @@ public class NfcAc extends BaseActivty {
         try {
             if (nfcUtil.writeM1Block(intent, pos, text)) {
                 tv_02.setText("" + "写入成功:" + text);
+                num2++;
                 return true;
             } else {
                 tv_02.setText("" + "写入失败");

@@ -375,6 +375,22 @@ public abstract class BaseMyDialog extends Dialog {
     }
 
 
+    public float getmWidthScale() {
+        return mWidthScale;
+    }
+
+    public void setmWidthScale(float mWidthScale) {
+        this.mWidthScale = mWidthScale;
+    }
+
+    public float getmHeightScale() {
+        return mHeightScale;
+    }
+
+    public void setmHeightScale(float mHeightScale) {
+        this.mHeightScale = mHeightScale;
+    }
+
     public String getmBtnLeftText() {
         return mBtnLeftText;
     }

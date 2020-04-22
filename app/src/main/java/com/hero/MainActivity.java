@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.hero.adapter.AppleBean;
 import com.hero.libhero.mydb.DbUtil;
 import com.hero.libhero.mydb.LogUtil;
+import com.hero.libhero.mydialog.DoOk;
+import com.hero.libhero.mydialog.MyDialog;
 import com.hero.libhero.okhttp.OkHttpUtil;
 import com.hero.libhero.okhttp.https.MyCallBack;
 import com.hero.libhero.permissions.PermissionListener;
@@ -38,8 +40,6 @@ import java.util.Set;
 import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.OnClick;
-
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends BaseActivty {
 
@@ -181,8 +181,6 @@ public class MainActivity extends BaseActivty {
     }
 
 
-
-
     //文字切换
     private void ftvInit() {
         int colorId = mActivity.getResources().getColor(R.color.colorPrimary);
@@ -207,7 +205,7 @@ public class MainActivity extends BaseActivty {
     //Butterknife 自动生成的
     @OnClick({R.id.tv_res, R.id.tv_res2,
             R.id.tv_res3, R.id.tv_todownload,
-            R.id.tv_toupload,R.id.tv_change})
+            R.id.tv_toupload, R.id.tv_change})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_res:
@@ -223,7 +221,19 @@ public class MainActivity extends BaseActivty {
                 startActivity(intent);
                 break;
             case R.id.tv_res2:
-                payDialog();
+                //payDialog();
+
+                MyDialog myDialog = new MyDialog(mActivity);
+                myDialog.setmContent("是否退出当前页面？");
+                myDialog.show();
+                myDialog.setmWidthScale(0.2f);
+                myDialog.setokClick(new DoOk() {
+                    @Override
+                    public void doOk() {
+                        myDialog.dismiss();
+
+                    }
+                });
                 break;
             case R.id.tv_res3:
                 intent = new Intent(mContext, NfcAc.class);
