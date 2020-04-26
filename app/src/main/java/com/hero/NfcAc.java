@@ -64,6 +64,11 @@ public class NfcAc extends BaseActivty {
         String id = nfcUtil.readNFCId(intent);
         tv_01.setText("id=" + id);
 
+        readM1Block(intent);
+        //read(intent);
+    }
+
+    private void read(Intent intent){
         if (nfcUtil.isMifareClassic(intent)) {
             readTag(intent);
 
@@ -71,8 +76,6 @@ public class NfcAc extends BaseActivty {
             if (isTrue == true) {
                 readM1Block(intent);
             }
-
-            //readM1Block(intent);
 
         } else if (nfcUtil.isMifareUltralight(intent)) {
 
@@ -136,14 +139,18 @@ public class NfcAc extends BaseActivty {
     String[] stu = {
             "00101V0HTDETS", "00101IF1D7UVB", "00101DQXK8RXR", "00101BBZYYXOB",
             "00101TFCD1MGW", "001017MOHCAWP", "00101KE4CIYFY", "00101PG1WX85Y",
-            "00101JMGOIBVT",};
+            "00101JMGOIBVT"};
+
+    String[] jifen = {
+            "001033ECCB313", "001031A0017F2", "0010377EEC7D6"};
+
     int num2 = 0;
 
     private boolean writeM1Block(Intent intent) {
 
 
         //String text = "0010194CLPKZX";//00101ZXGBCQJ3
-        String text = "00101ZXGBCQJ3";//stu[num2];
+        String text = "8407EE3A";
 
         int sectorIndex = 6;//第几个扇区
         int blockIndex = 1;//第几个扇区中的第几块

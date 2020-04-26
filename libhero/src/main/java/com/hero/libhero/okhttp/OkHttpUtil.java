@@ -143,32 +143,32 @@ public class OkHttpUtil {
     }
 
     public static void doPostJsonStr(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
-        Request request = getJsonStr(http_url, map);
+        Request request = getJson(METHOD_POST,http_url, map);
         executeRequest(request, myCallBack);
     }
 
     public static void doPostJsonStrAsyn(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
-        Request request = getJsonStr(http_url, map);
+        Request request = getJson(METHOD_POST,http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
     //后台可以使用Map 或对象接收
-    private static Request getJsonStr(String http_url, Map<String, Object> map) {
-        //数据类型为json格式，
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        String josnStr = JsonUtil.objToString(map);
-
-        RequestBody jsonBody = RequestBody.create(JSON, josnStr);
-        LogUtil.e("参数:http_url=" + http_url);
-        LogUtil.e("参数:josnStr=" + josnStr);
-        Request request = new Request.Builder()//创建Request 对象。
-                .url(http_url)
-                .headers(getHeaders())
-                .post(jsonBody)//传递请求体
-                .build();
-
-        return request;
-    }
+//    private static Request getJsonStr(String http_url, Map<String, Object> map) {
+//        //数据类型为json格式，
+//        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+//        String josnStr = JsonUtil.objToString(map);
+//
+//        RequestBody jsonBody = RequestBody.create(JSON, josnStr);
+//        LogUtil.e("参数:http_url=" + http_url);
+//        LogUtil.e("参数:josnStr=" + josnStr);
+//        Request request = new Request.Builder()//创建Request 对象。
+//                .url(http_url)
+//                .headers(getHeaders())
+//                .post(jsonBody)//传递请求体
+//                .build();
+//
+//        return request;
+//    }
 
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
@@ -179,7 +179,7 @@ public class OkHttpUtil {
      * post,put,delete都需要body，但也都有body等于空的情况，
      * 此时也应该有body对象，但body中的内容为空
      */
-
+    /////////传bidy//////////
     public static void doPostBody(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_POST, http_url, map);
         executeRequest(request, myCallBack);
@@ -201,6 +201,29 @@ public class OkHttpUtil {
         enqueueRequest(request, myCallBack);
     }
 
+
+    /////////传json//////////
+
+    public static void doPostJson(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
+        Request request = getJson(METHOD_POST, http_url, map);
+        executeRequest(request, myCallBack);
+    }
+
+
+    public static void doPostJsonAsny(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
+        Request request = getJson(METHOD_POST, http_url, map);
+        enqueueRequest(request, myCallBack);
+    }
+
+    public static void doPutJsonAsny(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
+        Request request = getJson(METHOD_PUT, http_url, map);
+        enqueueRequest(request, myCallBack);
+    }
+
+    public static void doDeleteJsonAsny(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
+        Request request = getJson(METHOD_DELETE, http_url, map);
+        enqueueRequest(request, myCallBack);
+    }
 
     //后台可以使用@RequestParam()接收
     private static Request getBody(String method, String http_url, Map<String, Object> map) {
@@ -230,7 +253,33 @@ public class OkHttpUtil {
 
         return request;
     }
+    private static Request getJson(String method, String http_url, Map<String, Object> map) {
+        //数据类型为json格式，
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        String josnStr = JsonUtil.objToString(map);
 
+        RequestBody jsonBody = RequestBody.create(JSON, josnStr);
+        LogUtil.e("参数:http_url=" + http_url);
+        LogUtil.e("参数:josnStr=" + josnStr);
+
+
+        Request.Builder builder = new Request.Builder();
+        if (method.equals(METHOD_POST)) {
+            builder.post(jsonBody);
+        } else if (method.equals(METHOD_PUT)) {
+            builder.put(jsonBody);
+        } else if (method.equals(METHOD_DELETE)) {
+            builder.delete(jsonBody);
+        }
+
+        builder.headers(getHeaders());
+        builder.url(http_url);
+
+        //创建Request 对象。
+        Request request = builder.build();
+
+        return request;
+    }
     ////////////////////////////文件操作/////////////////////////
     private static MediaType FILE_TYPE = null;//MediaType.parse("application/octet-stream");
 
@@ -244,6 +293,9 @@ public class OkHttpUtil {
         //设置类型
         builder.setType(MultipartBody.FORM);
         //追加参数
+
+        LogUtil.e("参数:http_url=" + http_url);
+
         for (String key : map.keySet()) {
             Object object = map.get(key);
             if (!(object instanceof File)) {
@@ -253,7 +305,11 @@ public class OkHttpUtil {
                 builder.addFormDataPart(key, file.getName(),
                         RequestBody.create(FILE_TYPE, file));
             }
+
+            LogUtil.e("参数:key=" + key+"-->"+object.toString());
         }
+
+
         //创建RequestBody
         RequestBody body = builder.build();
         //创建Request
@@ -277,6 +333,7 @@ public class OkHttpUtil {
         //设置类型
         builder.setType(MultipartBody.FORM);
         //追加参数
+        LogUtil.e("参数:http_url=" + http_url);
         for (String key : map.keySet()) {
             Object object = map.get(key);
             if (!(object instanceof File)) {
@@ -286,6 +343,8 @@ public class OkHttpUtil {
                 builder.addFormDataPart(key, file.getName(),
                         createProgressRequestBody(FILE_TYPE, file, reqProgressCallBack));
             }
+
+            LogUtil.e("参数:key=" + key+"-->"+object.toString());
         }
         //创建RequestBody
         RequestBody body = builder.build();
