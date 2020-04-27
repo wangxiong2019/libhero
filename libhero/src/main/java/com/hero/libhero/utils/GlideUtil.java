@@ -28,14 +28,24 @@ public class GlideUtil {
 
     }
 
-    public static void loadGifOrImg(Context context, String url, ImageView imageView) {
+    public static void loadGifOrImg(Context context, String url, ImageView imageView, RequestOptions requestOptions) {
 
         LogUtil.e("loadGifImg=" + url);
 
         if (url.contains(".gif")) {
-            Glide.with(context).asGif().load(url).apply(getRequestOptions()).into(imageView);
+
+            if (requestOptions == null) {
+                Glide.with(context).asGif().load(url).into(imageView);
+            } else {
+                Glide.with(context).asGif().load(url).apply(getRequestOptions()).into(imageView);
+            }
         } else {
-            Glide.with(context).load(url).apply(getRequestOptions()).into(imageView);
+            if (requestOptions == null) {
+                Glide.with(context).load(url).into(imageView);
+            } else {
+                Glide.with(context).load(url).apply(getRequestOptions()).into(imageView);
+
+            }
         }
 
     }
@@ -95,5 +105,16 @@ public class GlideUtil {
 
     }
 
+
+    public static RequestOptions getResOptions(int placeholder,int fallback,int error) {
+
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(placeholder)//图片加载出来前，显示的图片 R.mipmap.img_default_yuan
+                .fallback(fallback) //url为空的时候,显示的图片
+                .error(error);//图片加载失败后，显示的图片 .centerCrop();
+
+
+        return requestOptions;
+    }
 
 }

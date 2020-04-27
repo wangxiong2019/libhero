@@ -64,11 +64,11 @@ public class NfcAc extends BaseActivty {
         String id = nfcUtil.readNFCId(intent);
         tv_01.setText("id=" + id);
 
-        readM1Block(intent);
-        //read(intent);
+        //readM1Block(intent);
+        write(intent);
     }
 
-    private void read(Intent intent){
+    private void write(Intent intent){
         if (nfcUtil.isMifareClassic(intent)) {
             readTag(intent);
 
@@ -150,7 +150,7 @@ public class NfcAc extends BaseActivty {
 
 
         //String text = "0010194CLPKZX";//00101ZXGBCQJ3
-        String text = "8407EE3A";
+        String text = "123456778";
 
         int sectorIndex = 6;//第几个扇区
         int blockIndex = 1;//第几个扇区中的第几块
