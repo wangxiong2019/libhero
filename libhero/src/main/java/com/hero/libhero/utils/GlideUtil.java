@@ -28,7 +28,12 @@ public class GlideUtil {
 
     }
 
-    public static void loadGifOrImg(Context context, String url, ImageView imageView, RequestOptions requestOptions) {
+    public static void loadGifOrImg(Context context, String url, ImageView imageView) {
+
+        loadGifOrImgWithRO(context,url,imageView,null);
+
+    }
+    public static void loadGifOrImgWithRO(Context context, String url, ImageView imageView, RequestOptions requestOptions) {
 
         LogUtil.e("loadGifImg=" + url);
 
@@ -37,13 +42,13 @@ public class GlideUtil {
             if (requestOptions == null) {
                 Glide.with(context).asGif().load(url).into(imageView);
             } else {
-                Glide.with(context).asGif().load(url).apply(getRequestOptions()).into(imageView);
+                Glide.with(context).asGif().load(url).apply(requestOptions).into(imageView);
             }
         } else {
             if (requestOptions == null) {
                 Glide.with(context).load(url).into(imageView);
             } else {
-                Glide.with(context).load(url).apply(getRequestOptions()).into(imageView);
+                Glide.with(context).load(url).apply(requestOptions).into(imageView);
 
             }
         }
