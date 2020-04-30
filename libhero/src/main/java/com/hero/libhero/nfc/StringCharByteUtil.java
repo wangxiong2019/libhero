@@ -53,7 +53,7 @@ public class StringCharByteUtil {
             String s4 = Integer.toHexString(ch);
             str = str + s4;
         }
-        LogUtil.e("hs=" + str);
+        LogUtil.e("strToHexStr=" + str);
         return str;
     }
 
@@ -82,7 +82,7 @@ public class StringCharByteUtil {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-        LogUtil.e("hs=" + s);
+        LogUtil.e("hexToStr=" + s);
         return s;
     }
 

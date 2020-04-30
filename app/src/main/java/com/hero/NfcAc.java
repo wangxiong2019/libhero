@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.widget.TextView;
 
 import com.hero.libhero.nfc.NfcUtil;
+import com.hero.libhero.nfc.StringCharByteUtil;
 import com.hero.libhero.view.XToast;
 
 import java.io.IOException;
@@ -42,6 +43,8 @@ public class NfcAc extends BaseActivty {
             tv_01.setText("不支持nfc功能");
         }
 
+        StringCharByteUtil.strToHexStr("00103392515AB");
+        StringCharByteUtil.hexToStr("30303130333339323531354142");
     }
 
     /**
@@ -53,15 +56,16 @@ public class NfcAc extends BaseActivty {
      * 5.要修改密钥需要先校验密钥之后修改控制位数据、密钥数据。
      */
 
-    int sectorIndex = 6;//6扇区          下标以0开始
-    int blockIndex = 1;//6扇区中的第2块  下标以0开始
+    int sectorIndex = 6;//5扇区          下标以0开始
+    int blockIndex = 1;//5扇区中的第2块  下标以0开始
 
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
 
-        String id = nfcUtil.readNFCId(intent);
+        String hexstr = nfcUtil.readNFCId(intent);
+        String id= StringCharByteUtil.hexToStr(hexstr);
         tv_01.setText("id=" + id);
 
         //readM1Block(intent);
@@ -129,6 +133,7 @@ public class NfcAc extends BaseActivty {
     private void readM1Block(Intent intent) {
         try {
             String str = nfcUtil.readM1Block(intent, sectorIndex, blockIndex);
+
             tv_03.setText(sectorIndex + "扇区,第" + (blockIndex + 1) + "块数据：\n" + str);
         } catch (IOException e) {
             e.printStackTrace();
@@ -146,14 +151,14 @@ public class NfcAc extends BaseActivty {
 
     int num2 = 0;
 
+    //学生id     6扇区1块位置
+    //积分卡id   5扇区1块位置  龙霞积分卡id 00103E40A8CA8  测试id 8407EE3A
     private boolean writeM1Block(Intent intent) {
 
 
         //String text = "0010194CLPKZX";//00101ZXGBCQJ3
-        String text = "123456778";
+        String text = "123ASD";
 
-        int sectorIndex = 6;//第几个扇区
-        int blockIndex = 1;//第几个扇区中的第几块
 
         //总位置
         int pos = 4 * sectorIndex + blockIndex;
