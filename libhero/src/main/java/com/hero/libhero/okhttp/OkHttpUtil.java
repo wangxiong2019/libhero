@@ -552,9 +552,7 @@ public class OkHttpUtil {
 
 
                 LogUtil.e("http_url=" + request.url().toString());
-                if(request.body()!=null) {
-                    LogUtil.e("参数:" + request.body().toString());
-                }
+
                 LogUtil.e("返回code:" + code + "");
                 LogUtil.e("返回isSuccessful:" + isSucess + "");
                 LogUtil.e("返回message:" + msg + "");
