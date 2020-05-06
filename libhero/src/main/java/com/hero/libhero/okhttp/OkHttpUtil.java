@@ -3,6 +3,7 @@ package com.hero.libhero.okhttp;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.okhttp.cookie.SimpleCookieJar;
@@ -143,12 +144,12 @@ public class OkHttpUtil {
     }
 
     public static void doPostJsonStr(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
-        Request request = getJson(METHOD_POST,http_url, map);
+        Request request = getJson(METHOD_POST, http_url, map);
         executeRequest(request, myCallBack);
     }
 
     public static void doPostJsonStrAsyn(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
-        Request request = getJson(METHOD_POST,http_url, map);
+        Request request = getJson(METHOD_POST, http_url, map);
         enqueueRequest(request, myCallBack);
     }
 
@@ -230,7 +231,7 @@ public class OkHttpUtil {
         FormBody.Builder formBody = new FormBody.Builder();//创建表单请求体
         if (null != map && map.size() > 0) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                formBody.add(entry.getKey(),  entry.getValue().toString());
+                formBody.add(entry.getKey(), entry.getValue().toString());
                 LogUtil.e("参数:" + entry.getKey() + "=" + entry.getValue().toString());
             }
         }
@@ -253,13 +254,14 @@ public class OkHttpUtil {
 
         return request;
     }
+
     private static Request getJson(String method, String http_url, Map<String, Object> map) {
         //数据类型为json格式，
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         String josnStr = JsonUtil.objToString(map);
 
         RequestBody jsonBody = RequestBody.create(JSON, josnStr);
-        LogUtil.e("参数:http_url=" + http_url);
+        //LogUtil.e("参数:http_url=" + http_url);
         LogUtil.e("参数:josnStr=" + josnStr);
 
 
@@ -280,11 +282,12 @@ public class OkHttpUtil {
 
         return request;
     }
+
     ////////////////////////////文件操作/////////////////////////
     private static MediaType FILE_TYPE = null;//MediaType.parse("application/octet-stream");
 
     /**
-     * 只有一个文件，且提交服务器时不用指定键，带键值对参数 不带上传进度
+     * 提交服务器时不用指定键，带键值对参数 不带上传进度
      */
     public static void setPostParameAndFile(String http_url, Map<String, Object> map,
                                             MyCallBack myCallBack) {
@@ -293,8 +296,6 @@ public class OkHttpUtil {
         //设置类型
         builder.setType(MultipartBody.FORM);
         //追加参数
-
-        LogUtil.e("参数:http_url=" + http_url);
 
         for (String key : map.keySet()) {
             Object object = map.get(key);
@@ -306,7 +307,7 @@ public class OkHttpUtil {
                         RequestBody.create(FILE_TYPE, file));
             }
 
-            LogUtil.e("参数:key=" + key+"-->"+object.toString());
+            LogUtil.e("参数:key=" + key + "-->" + object.toString());
         }
 
 
@@ -333,7 +334,7 @@ public class OkHttpUtil {
         //设置类型
         builder.setType(MultipartBody.FORM);
         //追加参数
-        LogUtil.e("参数:http_url=" + http_url);
+
         for (String key : map.keySet()) {
             Object object = map.get(key);
             if (!(object instanceof File)) {
@@ -344,7 +345,7 @@ public class OkHttpUtil {
                         createProgressRequestBody(FILE_TYPE, file, reqProgressCallBack));
             }
 
-            LogUtil.e("参数:key=" + key+"-->"+object.toString());
+            LogUtil.e("参数:key=" + key + "-->" + object.toString());
         }
         //创建RequestBody
         RequestBody body = builder.build();
@@ -365,20 +366,23 @@ public class OkHttpUtil {
     /**
      * 下载文件
      *
-     * @param fileUrl     文件url
-     * @param saveFileDir 存储目标目录
+     * @param downloadFileUrl 下载文件url
+     * @param saveFileDir     存储目标目录
      */
 
-    public static void downLoadProgressFile(String fileUrl, final String saveFileDir,
+    public static void downLoadProgressFile(String downloadFileUrl,
+                                            final String saveFileDir,
                                             final ReqProgressCallBack myCallBack) {
-        int index = fileUrl.lastIndexOf("/");
-        String fileName = fileUrl.substring((index + 1));
-        final File file = new File(saveFileDir, fileName);
+        if (TextUtils.isEmpty(downloadFileUrl) || TextUtils.isEmpty(saveFileDir)) {
+            return;
+        }
+
+        final File file = new File(saveFileDir);
         if (file.exists()) {
             file.delete();
             return;
         }
-        final Request request = new Request.Builder().url(fileUrl).build();
+        final Request request = new Request.Builder().url(downloadFileUrl).build();
         final Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -504,9 +508,6 @@ public class OkHttpUtil {
 
 
         final Call call = mOkHttpClient.newCall(request);
-//            LogUtil.e("execute返回code", response.code() + "");
-//            LogUtil.e("execute返回isSuccessful", response.isSuccessful() + "");
-//            LogUtil.e("execute返回message", response.message() + "");
         try {
             final Response response = call.execute();
             if (response.isSuccessful()) {
@@ -548,12 +549,18 @@ public class OkHttpUtil {
                 final int code = response.code();
                 final boolean isSucess = response.isSuccessful();
                 final String msg = response.message();
-                LogUtil.e("enqueue返回code:" + code + "");
-                LogUtil.e("enqueue返回isSuccessful:" + isSucess + "");
-                LogUtil.e("enqueue返回message:" + msg + "");
+
+
+                LogUtil.e("http_url=" + request.url().toString());
+                if(request.body()!=null) {
+                    LogUtil.e("参数:" + request.body().toString());
+                }
+                LogUtil.e("返回code:" + code + "");
+                LogUtil.e("返回isSuccessful:" + isSucess + "");
+                LogUtil.e("返回message:" + msg + "");
 
                 final String res = response.body().string();
-                LogUtil.e("enqueue返回data:\n" + res);
+                LogUtil.e("返回data:\n" + res);
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {

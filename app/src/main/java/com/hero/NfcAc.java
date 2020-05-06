@@ -56,8 +56,7 @@ public class NfcAc extends BaseActivty {
      * 5.要修改密钥需要先校验密钥之后修改控制位数据、密钥数据。
      */
 
-    int sectorIndex = 6;//5扇区          下标以0开始
-    int blockIndex = 1;//5扇区中的第2块  下标以0开始
+
 
     @Override
     public void onNewIntent(Intent intent) {
@@ -129,7 +128,8 @@ public class NfcAc extends BaseActivty {
         String str = nfcUtil.readNFCFromTag(intent);
         tv_03.setText("标签数据：" + str);
     }
-
+    int sectorIndex = 5;//5扇区          下标以0开始
+    int blockIndex = 1;//5扇区中的第2块  下标以0开始
     private void readM1Block(Intent intent) {
         try {
             String str = nfcUtil.readM1Block(intent, sectorIndex, blockIndex);
@@ -157,7 +157,7 @@ public class NfcAc extends BaseActivty {
 
 
         //String text = "0010194CLPKZX";//00101ZXGBCQJ3
-        String text = "123ASD";
+        String text = "00103E40A8CA8";
 
 
         //总位置

@@ -42,13 +42,17 @@ public class DownloadAc extends BaseActivty {
 
         breakPoints = SharedUtil.getLong("apk_long");
         initFile();
-
+        downLoadProgressFile();
     }
 
     //下载文件 带进度
     private void downLoadProgressFile() {
         ActivityUtil.IsHasSD();
-        String save_path = ActivityUtil.mSavePath;
+
+
+        int index = file_path.lastIndexOf("/");
+        String fileName = file_path.substring((index + 1));
+        String save_path = ActivityUtil.mSavePath+"/"+fileName;
 
         OkHttpUtil.downLoadProgressFile(file_path, save_path, new ReqProgressCallBack() {
             @Override
