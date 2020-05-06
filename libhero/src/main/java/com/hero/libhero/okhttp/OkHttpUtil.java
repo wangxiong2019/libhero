@@ -373,7 +373,7 @@ public class OkHttpUtil {
     public static void downLoadProgressFile(String downloadFileUrl,
                                             final String saveFileDir,
                                             final ReqProgressCallBack myCallBack) {
-        if (TextUtils.isEmpty(downloadFileUrl) || TextUtils.isEmpty(saveFileDir)) {
+        if (TextUtils.isEmpty(downloadFileUrl) ) {
             return;
         }
 
