@@ -378,10 +378,7 @@ public class OkHttpUtil {
         }
 
         final File file = new File(saveFileDir);
-        if (file.exists()) {
-            file.delete();
-            return;
-        }
+
         final Request request = new Request.Builder().url(downloadFileUrl).build();
         final Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
