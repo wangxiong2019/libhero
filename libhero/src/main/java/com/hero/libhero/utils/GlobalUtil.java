@@ -34,6 +34,18 @@ import java.util.regex.Pattern;
  */
 public class GlobalUtil {
 
+
+    public static String clearLastZero(String score){
+        if (score.indexOf(".") > 0) {
+            //正则表达
+            score = score.replaceAll("0+?$", "");//去掉后面无用的零
+            score = score.replaceAll("[.]$", "");//如小数点后面全是零则去掉小数点
+        }
+
+        return score;
+    }
+
+
     private static final int TIME = 1000;
     private static long lastClickTime = 0;
     /**

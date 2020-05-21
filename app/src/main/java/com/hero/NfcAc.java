@@ -63,12 +63,11 @@ public class NfcAc extends BaseActivty {
         super.onNewIntent(intent);
 
 
-        String hexstr = nfcUtil.readNFCId(intent);
-        String id= StringCharByteUtil.hexToStr(hexstr);
+        String id = nfcUtil.readNFCId(intent);
         tv_01.setText("id=" + id);
 
-        //readM1Block(intent);
-        write(intent);
+        readM1Block(intent);
+        //write(intent);
     }
 
     private void write(Intent intent){
@@ -90,18 +89,7 @@ public class NfcAc extends BaseActivty {
     }
 
     String[] strs = {
-            "POEW4C", "5O6JVN", "IODWDJ", "KONCQX",
-            "3O4lEA", "MO6TVl", "FO9SVW", "ROHIZY",
-            "4OR57W", "VOHU52", "YODZ5A", "lOYHEA",
-            "TOGURS", "NO3EJI", "6OUBI7", "BONFNN",
-            "GO7X7G", "HOARD9", "WQO986", "WWOTXX",
-            "WEO5XQ", "W8ONCC", "WAO3IH", "WSO9CG",
-            "W2O3HR", "WDOT6E", "WZOCAS", "WXOMAN",
-            "W9OUH9", "WCO3NW", "W7OD4W", "WPOHCH",
-            "W5O8PF", "WIOHDl", "WKOM6F", "W3OKGF",
-            "WMOG7P", "WJOlDM", "WUOTNE", "WFOXQ6"
-
-
+            "W8ONCC", "WDOT6E", "WCO3NW"
     };
     int num = 0;
 
@@ -110,7 +98,7 @@ public class NfcAc extends BaseActivty {
 
         //NTAG213 读写
         int page = 4;
-        String text = "WFOXQ6";//strs[num];
+        String text = strs[num];
         boolean isWriteNTAG = nfcUtil.writeStrNTAG213(intent, page, text);
 
         if (isWriteNTAG == true) {
@@ -128,7 +116,7 @@ public class NfcAc extends BaseActivty {
         String str = nfcUtil.readNFCFromTag(intent);
         tv_03.setText("标签数据：" + str);
     }
-    int sectorIndex = 5;//5扇区          下标以0开始
+    int sectorIndex = 6;//5扇区          下标以0开始
     int blockIndex = 1;//5扇区中的第2块  下标以0开始
     private void readM1Block(Intent intent) {
         try {
@@ -147,9 +135,10 @@ public class NfcAc extends BaseActivty {
             "00101JMGOIBVT"};
 
     String[] jifen = {
-            "001033ECCB313", "001031A0017F2", "0010377EEC7D6"};
+            "00101oqwPk7Kg", "00101TVAvulej", "00101pwumja2S",
+            "00101du9c7k3T", "00101fARY7x2A", "00101pwumja2S"};
 
-    int num2 = 0;
+    int num2 = 1;
 
     //学生id     6扇区1块位置
     //积分卡id   5扇区1块位置  龙霞积分卡id 00103E40A8CA8  测试id 8407EE3A
@@ -157,7 +146,14 @@ public class NfcAc extends BaseActivty {
 
 
         //String text = "0010194CLPKZX";//00101ZXGBCQJ3
-        String text = "00103E40A8CA8";
+//        String aa="";
+//        if(num2<10){
+//            aa="0"+num2;
+//        }else {
+//            aa=num2+"";
+//        }
+
+        String text = "001011AF83DF33";
 
 
         //总位置
