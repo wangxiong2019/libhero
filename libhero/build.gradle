@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-
+//切面  2
+apply plugin: 'android-aspectjx'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
@@ -48,7 +49,8 @@ dependencies {
     //阿里巴巴 字符串解析
     api files('libs/fastjson-1.2.9.jar')
 
-
+    //切面  3
+    api 'org.aspectj:aspectjrt:1.8.+'
 
 
     //图片加载框架 4.8.0与com.android.support:appcompat-v7:*** 冲突

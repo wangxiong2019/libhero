@@ -20,6 +20,7 @@ import com.hero.libhero.permissions.PermissionsUtil;
 import com.hero.libhero.utils.ActivityUtil;
 import com.hero.libhero.utils.GlideUtil;
 import com.hero.libhero.utils.JsonUtil;
+import com.hero.libhero.utils.singleclick.SingleClick;
 import com.hero.libhero.utils.StatusBarUtils;
 import com.hero.libhero.view.FlipTextView;
 import com.hero.libhero.view.PayPassDialog;
@@ -203,11 +204,19 @@ public class MainActivity extends BaseActivty {
 
 
     //Butterknife 自动生成的
-    @OnClick({R.id.tv_res, R.id.tv_res2,
+
+    int num;
+
+    @SingleClick(5000)
+    @OnClick({R.id.tv_res, R.id.tv_res2, R.id.tv_double,
             R.id.tv_res3, R.id.tv_todownload,
             R.id.tv_toupload, R.id.tv_change})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.tv_double:
+                num++;
+                XToast.error(mContext, "num=" + num).show();
+                break;
             case R.id.tv_res:
                 intent = new Intent(mContext, EventBusAc.class);
                 startActivity(intent);

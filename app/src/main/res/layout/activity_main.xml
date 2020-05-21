@@ -15,6 +15,13 @@
         android:layout_gravity="center" />
 
     <TextView
+        android:id="@+id/tv_double"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="禁止双击" />
+
+    <TextView
         android:id="@+id/tv_res"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
