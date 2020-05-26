@@ -36,7 +36,15 @@
         <activity android:name=".UploadAc" />
         <activity android:name=".SelectImgAc" />
 
-
+        <activity android:name=".launchmode.LaunchModeAc"/>
+        <activity android:name=".launchmode.StandardAc"
+            android:launchMode="standard"/>
+        <activity android:name=".launchmode.SingleTopAc"
+            android:launchMode="singleTop"/>
+        <activity android:name=".launchmode.SingleTaskAc"
+            android:launchMode="singleTask"/>
+        <activity android:name=".launchmode.SingleInstanceAc"
+            android:launchMode="singleInstance"/>
 
         <activity
             android:name=".NfcAc"

@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hero.adapter.AppleBean;
+import com.hero.adapter.StrAdapter_GV;
+import com.hero.launchmode.LaunchModeAc;
 import com.hero.libhero.mydb.DbUtil;
 import com.hero.libhero.mydb.LogUtil;
 import com.hero.libhero.mydialog.DoOk;
@@ -20,8 +24,8 @@ import com.hero.libhero.permissions.PermissionsUtil;
 import com.hero.libhero.utils.ActivityUtil;
 import com.hero.libhero.utils.GlideUtil;
 import com.hero.libhero.utils.JsonUtil;
-import com.hero.libhero.utils.singleclick.SingleClick;
 import com.hero.libhero.utils.StatusBarUtils;
+import com.hero.libhero.utils.singleclick.SingleClick;
 import com.hero.libhero.view.FlipTextView;
 import com.hero.libhero.view.PayPassDialog;
 import com.hero.libhero.view.PayPassView;
@@ -53,25 +57,14 @@ public class MainActivity extends BaseActivty {
      * 这里需要注意的是在勾选控件的界面上，有一个CreateViewHolder ,
      * 很明显这个是专门为ListView或者RecyclerView的适配器专门提供的。
      */
-    @BindView(R.id.tv_res)
-    TextView tv_res;
-    @BindView(R.id.tv_res0)
-    TextView tv_res0;
-    @BindView(R.id.tv_res1)
-    TextView tv_res1;
-    @BindView(R.id.tv_res2)
-    TextView tv_res2;
-    @BindView(R.id.tv_res3)
-    TextView tv_res3;
-    @BindView(R.id.tv_change)
-    TextView tv_change;
 
-
-    @BindView(R.id.iv_01)
-    ImageView iv_01;
 
     @BindView(R.id.ftv)
     FlipTextView ftv;
+
+    @BindView(R.id.gv_main)
+    GridView gv_main;
+
 
     @Override
     public int getLayout() {
@@ -93,11 +86,11 @@ public class MainActivity extends BaseActivty {
         XToast.Config.get().setGravity(Gravity.CENTER); //显示在屏幕中央
         XToast.success(mContext, "状态栏高度=" + height).show();
 
-        doGet();
-
-        doPostBody();
-
-        doPostJsonStrAsyn();
+//        doGet();
+//
+//        doPostBody();
+//
+//        doPostJsonStrAsyn();
 
         initDb();
 
@@ -107,17 +100,6 @@ public class MainActivity extends BaseActivty {
 
 
         listToMapList();
-
-
-//        String text = "123456779";
-//        StringCharByteUtil.strToHexStr(text);
-//
-//        //人为崩溃
-//        List<String> list = new ArrayList<>();
-//        //LogUtil.e("list" + list.get(2));
-//
-//        String aa = StringCharByteUtil.strToHexStr("你好");
-//        tv_change.setText("你好-->hex:"+aa + "");
 
 
         PermissionsUtil.requestPermission(mActivity, new PermissionListener() {
@@ -133,6 +115,60 @@ public class MainActivity extends BaseActivty {
             }
         }, needPermissions);
 
+        initGv();
+    }
+
+    StrAdapter_GV strAdapterGv;
+    List<String> list;
+    private void initGv() {
+        strAdapterGv = new StrAdapter_GV(mActivity);
+        gv_main.setAdapter(strAdapterGv);
+         list = new ArrayList<>();
+        list.add("密码输入框");
+        list.add("NFC");
+        list.add("选择图片");
+        list.add("异步请求");
+        list.add("Activity LaunchMode");
+        list.add("Event Bus");
+        list.add("断点下载");
+        list.add("断点上传");
+
+        strAdapterGv.addData(list);
+
+        gv_main.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String str=list.get(position);
+                if(str.equals("密码输入框")){
+                    payDialog();
+                }
+                if(str.equals("NFC")){
+                    intent = new Intent(mContext, NfcAc.class);
+                    intent.putExtra("text", "温州浩兴科技有限公司");
+                    startActivity(intent);
+                }
+                if(str.equals("Activity LaunchMode")){
+                    intent = new Intent(mContext, LaunchModeAc.class);
+                    startActivity(intent);
+                }
+                if(str.equals("Event Bus")){
+                    intent = new Intent(mContext, EventBusAc.class);
+                    startActivity(intent);
+                }
+                if(str.equals("选择图片")){
+                    intent = new Intent(mContext, SelectImgAc.class);
+                    startActivity(intent);
+                }
+                if(str.equals("断点下载")){
+                    intent = new Intent(mContext, DownloadAc.class);
+                    startActivity(intent);
+                }
+                if(str.equals("断点上传")){
+                    intent = new Intent(mContext, UploadAc.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
 
@@ -191,70 +227,16 @@ public class MainActivity extends BaseActivty {
         List<String> stringList = new ArrayList<>();
         stringList.add("粘贴商品标题搜隐藏券拿返利");
         stringList.add("购物之前搜一搜,能省还能赚");
-        stringList.add("第三行");
         ftv.setData(stringList);
 
 
     }
 
     private void pic() {
-        String img_url = "http://img.hb.aicdn.com/43adcee6fa8d59ceb3219f8e7bfc818abcda59b22c8f1-r2zIW3";
-        GlideUtil.loadGifOrImg(this, img_url, iv_01);
+//        String img_url = "http://img.hb.aicdn.com/43adcee6fa8d59ceb3219f8e7bfc818abcda59b22c8f1-r2zIW3";
+//        GlideUtil.loadGifOrImg(this, img_url, iv_01);
     }
 
-
-    //Butterknife 自动生成的
-
-    int num;
-
-    @SingleClick(5000)
-    @OnClick({R.id.tv_res, R.id.tv_res2, R.id.tv_double,
-            R.id.tv_res3, R.id.tv_todownload,
-            R.id.tv_toupload, R.id.tv_change})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_double:
-                num++;
-                XToast.error(mContext, "num=" + num).show();
-                break;
-            case R.id.tv_res:
-                intent = new Intent(mContext, EventBusAc.class);
-                startActivity(intent);
-                break;
-            case R.id.tv_toupload:
-                intent = new Intent(mContext, UploadAc.class);
-                startActivity(intent);
-                break;
-            case R.id.tv_todownload:
-                intent = new Intent(mContext, DownloadAc.class);
-                startActivity(intent);
-                break;
-            case R.id.tv_res2:
-                //payDialog();
-
-                MyDialog myDialog = new MyDialog(mActivity);
-                myDialog.setmContent("是否退出当前页面？");
-                myDialog.show();
-                myDialog.setmWidthScale(0.2f);
-                myDialog.setokClick(new DoOk() {
-                    @Override
-                    public void doOk() {
-                        myDialog.dismiss();
-
-                    }
-                });
-                break;
-            case R.id.tv_res3:
-                intent = new Intent(mContext, NfcAc.class);
-                intent.putExtra("text", "温州浩兴科技有限公司");
-                startActivity(intent);
-                break;
-            case R.id.tv_change:
-                intent = new Intent(mContext, SelectImgAc.class);
-                startActivity(intent);
-                break;
-        }
-    }
 
 
     /**
@@ -369,7 +351,7 @@ public class MainActivity extends BaseActivty {
             List<UserBean> list = dbUtil.selectList(UserBean.class);
             LogUtil.e("list=" + list.size());
 
-            tv_res.setText(list.size() + "个");
+
 
             //查询单个
             UserBean userBean = (UserBean) dbUtil.selectClassByKey(UserBean.class, "name", "张三");
@@ -398,104 +380,105 @@ public class MainActivity extends BaseActivty {
     }
 
 
-    private void doGet() {
-        String url = "https://www.baidu.com/";
-
-        OkHttpUtil.doGetJsonStrAsyn(false, url, null, new MyCallBack() {
-
-            @Override
-            public void failBack(String res_msg, int res_code) {
-
-            }
-
-            @Override
-            public void successBack(String res_data) {
-
-            }
-        });
-
-    }
-
-
-    private void doPostBody() {
-        //同步请求
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Map<String, Object> map = new HashMap<>();
-                map.put("platform", "android");
-                map.put("vesion", "4.0.0");
-                map.put("app", "apt");
-
-                String http_url = "http://www.fastpaotui.com/App/CommonApi/PostRequestBody";
-
-                OkHttpUtil.doPostBody(http_url, map, new MyCallBack() {
-                    @Override
-                    public void failBack(String res_msg, int res_code) {
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                tv_res0.setText(res_msg);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void successBack(final String res_data) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
-                                tv_res0.setText(resData.getData().toString());
-
-                            }
-                        });
-                    }
-
-
-                });
-
-            }
-        }).start();
-
-
-    }
-
-    private void doPostJsonStrAsyn() {
-        //异步请求
-        Map<String, Object> map = new HashMap<>();
-        map.put("platform", "android");
-        map.put("vesion", "4.0.0");
-        map.put("app", "apt");
-        String http_url = "http://www.fastpaotui.com/App/CommonApi/PostJson";
-        //String http_url = "http://192.168.0.5:8081/App/CommonApi/GetProvinceList";
-
-        OkHttpUtil.doPostJsonStrAsyn(http_url, map, new MyCallBack() {
-            @Override
-            public void failBack(String res_msg, int res_code) {
-                tv_res1.setText(res_msg);
-            }
-
-            @Override
-            public void successBack(String res_data) {
-
-                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
-                tv_res1.setText(resData.getData().toString());
-
-            }
-
-        });
-    }
-
-
-    //EventBus   3.实现事件处理
+//    private void doGet() {
+//        String url = "https://www.baidu.com/";
+//
+//        OkHttpUtil.doGetJsonStrAsyn(false, url, null, new MyCallBack() {
+//
+//            @Override
+//            public void failBack(String res_msg, int res_code) {
+//
+//            }
+//
+//            @Override
+//            public void successBack(String res_data) {
+//
+//            }
+//        });
+//
+//    }
+//
+//
+//    private void doPostBody() {
+//        //同步请求
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Map<String, Object> map = new HashMap<>();
+//                map.put("platform", "android");
+//                map.put("vesion", "4.0.0");
+//                map.put("app", "apt");
+//
+//                String http_url = "http://www.fastpaotui.com/App/CommonApi/PostRequestBody";
+//
+//                OkHttpUtil.doPostBody(http_url, map, new MyCallBack() {
+//                    @Override
+//                    public void failBack(String res_msg, int res_code) {
+//
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                tv_res0.setText(res_msg);
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void successBack(final String res_data) {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
+//                                tv_res0.setText(resData.getData().toString());
+//
+//                            }
+//                        });
+//                    }
+//
+//
+//                });
+//
+//            }
+//        }).start();
+//
+//
+//    }
+//
+//    private void doPostJsonStrAsyn() {
+//        //异步请求
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("platform", "android");
+//        map.put("vesion", "4.0.0");
+//        map.put("app", "apt");
+//        String http_url = "http://www.fastpaotui.com/App/CommonApi/PostJson";
+//        //String http_url = "http://192.168.0.5:8081/App/CommonApi/GetProvinceList";
+//
+//        OkHttpUtil.doPostJsonStrAsyn(http_url, map, new MyCallBack() {
+//            @Override
+//            public void failBack(String res_msg, int res_code) {
+//                tv_res1.setText(res_msg);
+//            }
+//
+//            @Override
+//            public void successBack(String res_data) {
+//
+//                ResData resData = JsonUtil.dataToClass(res_data, ResData.class);
+//                tv_res1.setText(resData.getData().toString());
+//
+//            }
+//
+//        });
+//    }
+//
+//
+   //EventBus   3.实现事件处理
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMoonEvent(WxCodeEB event) {
         if (event != null) {
             LogUtil.e("接收到事件");
             String code = event.getCode();
-            tv_res3.setText("code=" + code);
+
+            XToast.success(mContext,"code=" + code).show();
         }
     }
 }

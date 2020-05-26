@@ -180,7 +180,7 @@ public class OkHttpUtil {
      * post,put,delete都需要body，但也都有body等于空的情况，
      * 此时也应该有body对象，但body中的内容为空
      */
-    /////////传bidy//////////
+    /////////传body//////////
     public static void doPostBody(String http_url, Map<String, Object> map, MyCallBack myCallBack) {
         Request request = getBody(METHOD_POST, http_url, map);
         executeRequest(request, myCallBack);

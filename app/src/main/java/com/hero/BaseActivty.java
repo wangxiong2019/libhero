@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
-import com.hero.libhero.utils.ActivityUtil;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.ButterKnife;
@@ -19,7 +17,7 @@ public abstract class BaseActivty extends AppCompatActivity {
     public Context mContext;
     public Intent intent;
 
-    public  String[] needPermissions = {
+    public String[] needPermissions = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
@@ -30,7 +28,6 @@ public abstract class BaseActivty extends AppCompatActivity {
         mActivity = this;
         mContext = this;
 
-        ActivityUtil.AddAct(this);
         TAG = getLocalClassName();
 
         ButterKnife.bind(this);
@@ -41,6 +38,7 @@ public abstract class BaseActivty extends AppCompatActivity {
     }
 
     public abstract int getLayout();
+
     public abstract void initView();
 
     //按返回键
@@ -48,7 +46,7 @@ public abstract class BaseActivty extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            ActivityUtil.FinishAct(mActivity);
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);

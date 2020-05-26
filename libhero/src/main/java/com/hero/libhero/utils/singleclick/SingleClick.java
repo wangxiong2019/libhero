@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface SingleClick {
     /* 点击间隔时间 */
-    long value() default 1500;
+    long value() default 2000;
 }

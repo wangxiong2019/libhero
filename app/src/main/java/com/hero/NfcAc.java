@@ -66,8 +66,8 @@ public class NfcAc extends BaseActivty {
         String id = nfcUtil.readNFCId(intent);
         tv_01.setText("id=" + id);
 
-        readM1Block(intent);
-        //write(intent);
+        //readM1Block(intent);
+        write(intent);
     }
 
     private void write(Intent intent){
@@ -153,7 +153,7 @@ public class NfcAc extends BaseActivty {
 //            aa=num2+"";
 //        }
 
-        String text = "001011AF83DF33";
+        String text = "123ASD";
 
 
         //总位置
