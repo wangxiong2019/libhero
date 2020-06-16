@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
+import com.hero.libhero.view.XToast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.ButterKnife;
@@ -46,9 +48,17 @@ public abstract class BaseActivty extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
+            XToast.error(mContext,"onBackPressed").show();
             finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        XToast.warning(mContext,"onBackPressed").show();
+//        finish();
+//    }
 }

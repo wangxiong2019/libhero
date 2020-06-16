@@ -47,7 +47,11 @@ dependencies {
     //okttp依赖
     api 'com.squareup.okhttp3:okhttp:3.3.0'
     //阿里巴巴 字符串解析
-    api files('libs/fastjson-1.2.9.jar')
+    api 'com.alibaba:fastjson:1.2.9'
+
+    //阿里巴巴 跨组件跳转
+    api 'com.alibaba:arouter-api:1.4.1'
+    annotationProcessor 'com.alibaba:arouter-compiler:1.2.2'
 
     //切面  3
     api 'org.aspectj:aspectjrt:1.8.+'

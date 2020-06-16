@@ -2,8 +2,12 @@ package com.hero;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.hero.libhero.LibHeroInitializer;
 import com.hero.libhero.keepalive.AliveJobService;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -20,12 +24,37 @@ public class MyApp extends Application {
         super.onCreate();
         context = getApplicationContext();
 
-        LibHeroInitializer.init(this, true);
+        boolean isDebug = isApkInDebug(this);
+
+        LibHeroInitializer.init(this, isDebug);
 
         initCrash();
 
         //保活服务
         //pullAliveService();
+
+        initARouter(isDebug);
+    }
+    private void initARouter(boolean isDebug){
+        Log.e("BaseApplication", "isDebug=" + isDebug);
+        if (isDebug) {
+            ARouter.openLog();
+            ARouter.openDebug();
+        }
+        ARouter.init(this);
+    }
+
+    /**
+     * 判断当前应用是否是debug状态
+     */
+
+    public static boolean isApkInDebug(Context context) {
+        try {
+            ApplicationInfo info = context.getApplicationInfo();
+            return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 
