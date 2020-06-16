@@ -41,8 +41,22 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    //只引用 不会打包
-    compileOnly 'com.android.support:design:29.0.0'
+
+    api 'com.android.support:design:29.0.0'
+    api 'com.google.android.material:material:1.2.0-alpha05'
+    api 'androidx.cardview:cardview:1.0.0'
+    api 'androidx.recyclerview:recyclerview:1.1.0'
+
+    //解决方法数小于65535
+    api 'androidx.multidex:multidex:2.0.1'
+
+
+
+    //事件分发、页面之间传值
+    api 'org.greenrobot:eventbus:3.1.1'
+    //butterknife 控件绑定 点击事件
+    api 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
 
     //okttp依赖
     api 'com.squareup.okhttp3:okhttp:3.3.0'
